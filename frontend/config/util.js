@@ -39,6 +39,7 @@ exports.cssLoaders = function (options = {}) {
     return {
         css: generateLoaders(),
         sass: generateLoaders('sass', { indentedSyntax: true }),
+        scss: generateLoaders('sass'),
         stylus: generateLoaders('stylus', stylusConfiguration),
         styl: generateLoaders('stylus', stylusConfiguration),
         js: {
