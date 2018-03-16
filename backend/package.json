@@ -9,6 +9,6 @@
     "https": "^1.0.0"
   },
   "scripts" : {
-	  "run": "cd src && nodejs server.js"
+	  "start": "cd src && nodejs server.js"
   }
 }
