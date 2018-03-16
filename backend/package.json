@@ -8,4 +8,7 @@
     "http": "^0.0.0",
     "https": "^1.0.0"
   }
+  "scripts" : {
+	"run": cd src && nodejs server.js
+  }
 }
