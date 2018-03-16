@@ -7,8 +7,8 @@
     "express": "^4.16.3",
     "http": "^0.0.0",
     "https": "^1.0.0"
-  }
+  },
   "scripts" : {
-	"run": "cd src && nodejs server.js"
+	  "run": "cd src && nodejs server.js"
   }
 }
