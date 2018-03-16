@@ -8,7 +8,6 @@ module.exports = {
     },
     "extends": [
         "eslint:recommended",
-        "plugin:vue/essential"
     ],
     "parserOptions": {
         "sourceType": "module",
