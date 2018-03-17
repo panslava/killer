@@ -1,19 +1,19 @@
 <template>
   <div id='app' >
-    <form >
-            <input type='text' v-model='name'>
+    <form  enctype="multipart/form-data" method="post"  >
+            <input type='text'   v-model='firstName'>
             <br>
-            <input type='text' v-model='surName'>
+            <input type='text'  v-model='lastName'>
             <br>
-            <input type='text' v-model='course'>
+            <input type='text'   v-model='course'>
             <br>
-            <input type='text' v-model='email'>
+            <input type='text'   v-model='email'>
             <br>
-            <input type='text' v-model='vk'>
+            <input type='text'    v-model='vk'>
             <br>
-            <input type='file' v-model='photo'>
+            <input type='file' id='file' @change='loadPhoto' >
             <br>
-            <button type='submit' @click='register'>Зарегистрироваться</button>
+            <button type='button' @click='register'>Зарегистрироваться</button>
 
     </form>
 
@@ -22,27 +22,44 @@
 </template>
 
 <script>
-
 export default {
-  name: 'Register',
-  data: function () {
-    return {
-      name:'',
-      surName:'',
-      course='',
-      email='',
-      vk='',
-      photo=''
+  data () {
+  return {
+    course:'',
+    email:'',
+    photo:''
+  }
+},
+  computed: {
+    firstName: function () {
+      return this.$store.state.user.firstName;
+    },
+    lastName: function () {
+      return this.$store.state.user.lastName;
+    },
+    vk: function () {
+      return this.$store.state.user.vk;
     }
+
   },
-
   methods: {
-    register: function () {
+    loadPhoto () {
+      var imagefile = document.getElementById('file');
+      this.photo=imagefile.files[0];
+    },
+    register () {
+     var postBody={
+       firstName:this.firstName,
+       lastName:this.lastName,
+       course:this.course,
+       email:this.email,
+       vk:this.vk,
+       photo:this.photo
+       }
+     this.$store.dispatch('register',postBody);
 
-
+       }
     }
   }
-
-    }
 
 </script>
