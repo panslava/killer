@@ -1,7 +1,8 @@
 const db = require('./dbController.js')
 const {check, validationResult} = require('express-validator/check')
 const {matchedData, sanitize} = require('express-validator/filter')
-
+const multer = require('multer')
+const path = require('path')
 // api here https://github.com/ctavan/express-validator
 // and here https://github.com/chriso/validator.js
 
@@ -36,6 +37,37 @@ exports.create_user_post = [
         db.createUser(user).then(() => res.sendStatus(200)).catch(() => res.sendStatus(500))
     }
 ]
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'photos/')
+    },
+    filename: (req, file, cb) => {
+        cb(null, 'photo-' + Date.now() + path.extname(file.originalname))
+    },
+})
+
+var upload = multer({
+    storage: storage,
+    limits: {filesize: 50 * 1024 * 1024},
+    fileFilter: function(req, file, cb) {
+        if (file.mimetype !== 'image/png' && file.mimetype !== 'image/jpeg') {
+            return cb(new Error('Only .png and .jpeg allowed'))
+        }
+        cb(null, true)
+    }
+}).single('photo')
+
+exports.update_user_photo = function (req, res) {
+    db.findUserById(req.id)
+        .then((gotUser) => {
+            if (gotUser.photoState == 3) return res.status(200).send('Фото уже прошло модерацию')
+            upload(req, res, (err) => {
+                if (err) return res.status(500).send(err)
+                db.updatePhotoToUser(gotUser._id, req.filename)
+            })
+        }).catch((err)=>res.status(500).send(err))
+}
 
 exports.get_user = function (req, res) {
     res.send('Not implemented: get_user')
