@@ -1,11 +1,11 @@
 <template>
     <div class="app">
-        Vue app
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
 export default {
-  
+
 }
 </script>
