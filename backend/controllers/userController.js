@@ -54,27 +54,34 @@ var upload = multer({
     limits: {filesize: 50 * 1024 * 1024},
     fileFilter: function(req, file, cb) {
         if (file.mimetype !== 'image/png' && file.mimetype !== 'image/jpeg') {
+            console.log(file.mimetype)
             return cb(new Error('Only .png and .jpeg allowed'))
         }
         cb(null, true)
     }
 }).single('photo')
 
+var photosPath = '/../src/photos'
+
 exports.update_user_photo = function (req, res) {
     if (!fs.existsSync('photos/')){
         fs.mkdirSync('photos/')
     }
     upload(req, res, (err) => {
-        if (err) return res.status(500).send(err)
+        if (err) return res.status(500).send('Invalid file. Only .png and .jpeg allowed')
         db.findUserById(req.body.id)
             .then((gotUser) => {
                 if (!gotUser.length) {
-                    fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
-                    return res.status(400).send('No user with this id')
+                    fs.unlink(__dirname + photosPath + req.file.filename, (err) => {
+                        if (err) return res.status(500).send('Error deleting uploaded file, in no user find case')
+                        return res.status(400).send('No user with this id')
+                    })
                 }
                 if (gotUser.photoState == 3) {
-                    fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
-                    return res.status(400).send('Фото уже прошло модерацию')
+                    fs.unlink(__dirname + photosPath + req.file.filename, (err) => {
+                        if (err) return res.status(500).send('Error deleting uploaded file, in already moderated case')
+                        return res.status(400).send('Photo already moderated')
+                    })
                 }
                 db.updateUserPhoto(req.body.id, req.file.filename)
                     .then(() => {
@@ -82,12 +89,14 @@ exports.update_user_photo = function (req, res) {
                             res.status(200).send('Photo succesfully updated')
                         })
                     }).catch((err) => {
-                        fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
-                        res.status(500).send(err)
+                        fs.unlink(__dirname + photosPath + req.file.filename, () => {
+                            res.status(500).send(err)
+                        })
                     })
             }).catch((err) => {
-                fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
-                res.status(500).send(err)
+                fs.unlink(__dirname + photosPath + req.file.filename, () => {
+                    res.status(500).send(err)
+                })
             })
     })
 }
