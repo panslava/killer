@@ -61,17 +61,18 @@ var upload = multer({
     }
 }).single('photo')
 
-var photosPath = '/../src/photos'
+var photosPath = '/../src/photos/'
 
 exports.update_user_photo = function (req, res) {
     if (!fs.existsSync('photos/')){
         fs.mkdirSync('photos/')
     }
     upload(req, res, (err) => {
-        if (err) return res.status(500).send('Invalid file. Only .png and .jpeg allowed')
+        if (err || !req.file) return res.status(400).send('Invalid file. Only .png and .jpeg allowed')
         db.findUserById(req.body.id)
             .then((gotUser) => {
                 if (!gotUser.length) {
+                    console.log(__dirname + photosPath + req.file.filename)
                     fs.unlink(__dirname + photosPath + req.file.filename, (err) => {
                         if (err) return res.status(500).send('Error deleting uploaded file, in no user find case')
                         return res.status(400).send('No user with this id')
@@ -83,19 +84,19 @@ exports.update_user_photo = function (req, res) {
                         return res.status(400).send('Photo already moderated')
                     })
                 }
-                db.updateUserPhoto(req.body.id, req.file.filename)
+                db.updateUserById(req.body.id, {photo: req.file.filename})
                     .then(() => {
-                        db.updateUserPhotoState(req.body.id, 1).then(() => {
-                            res.status(200).send('Photo succesfully updated')
+                        db.updateUserById(req.body.id, {photoState: 1}).then(() => {
+                            return res.status(200).send('Photo succesfully updated')
                         })
                     }).catch((err) => {
                         fs.unlink(__dirname + photosPath + req.file.filename, () => {
-                            res.status(500).send(err)
+                            return res.status(500).send(err)
                         })
                     })
             }).catch((err) => {
                 fs.unlink(__dirname + photosPath + req.file.filename, () => {
-                    res.status(500).send(err)
+                    return res.status(500).send(err)
                 })
             })
     })

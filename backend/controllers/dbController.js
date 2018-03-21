@@ -12,10 +12,6 @@ exports.findUserById = function(id) {
     return userModel.find({_id: id})
 }
 
-exports.updateUserPhoto = function (id, photoName) {
-    return userModel.findOneAndUpdate({_id: id}, {$set: {photo: photoName}}, {new: true})
-}
-
-exports.updateUserPhotoState = function (id, newState) {
-    return userModel.findOneAndUpdate({_id: id}, {$set: {photoState: newState}}, {new: true})
+exports.updateUserById = function (id, updateObject) {
+    return userModel.findByIdAndUpdate(id, updateObject, {new: true})
 }
