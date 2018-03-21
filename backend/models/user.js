@@ -17,37 +17,36 @@ const userSchema = mongoose.Schema({
             trim: true
         }
     },
-    course: {
-        type: Number //бакалавры: 1-4, магистры: 5-6, аспирант: 7, преподаватель: 8 (а вдруг :D)
+    course: { //бакалавры: 1-4, магистры: 5-6, аспирант: 7, преподаватель: 8 (а вдруг :D)
+        type: Number 
     },
     photo: {
         type: String,
         trim: true
     },
-    photoState: {
-        type: Number //  0 - не загружена, 1 - ожидает модерации, 2 - не прошла модерацию, 3 - прошла модерацию
+    photoState: { //  0 - не загружена, 1 - ожидает модерации, 2 - не прошла модерацию, 3 - прошла модерацию
+        type: Number 
     },
     modMessage: {
         type: String
     },
-    deathCode: {
-        type: String, //4 numbers
+    deathCode: { //4 numbers
+        type: String, 
         trim: true,
         required: true
     },
-    tryCount: {
-        type: Number // if >= 3 - die
+    tryCount: { // if >= 3 - die
+        type: Number 
     },
-    victimId: {
-        type: String, // _id from mongodb? is it better to use ObjectId???
+    victimId: {  // _id from mongodb? is it better to use ObjectId???
+        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    },
+    killerId: { // _id from mongodb? is it better to use ObjectId???
+        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
         trim: true
     },
-    killerId: {
-        type: String, // _id from mongodb? is it better to use ObjectId???
-        trim: true
-    },
-    lifeState: {
-        type: Number // 0 - dead, 1 - alive  
+    lifeState: { // 0 - dead, 1 - alive  
+        type: Number 
     },
     deathTime: {
         type: Date
@@ -62,8 +61,8 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true
     },
-    admin: {
-        type: Boolean //false - user, true - admin
+    admin: { //false - user, true - admin
+        type: Boolean
     }
 })
 
