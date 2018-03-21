@@ -61,18 +61,33 @@ var upload = multer({
 }).single('photo')
 
 exports.update_user_photo = function (req, res) {
+    if (!fs.existsSync('photos/')){
+        fs.mkdirSync('photos/')
+    }
     upload(req, res, (err) => {
         if (err) return res.status(500).send(err)
         db.findUserById(req.body.id)
             .then((gotUser) => {
-                if (!gotUser.length) return res.status(400).send('No user with this id')
-                if (gotUser.photoState == 3) return res.status(400).send('Фото уже прошло модерацию')
+                if (!gotUser.length) {
+                    fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
+                    return res.status(400).send('No user with this id')
+                }
+                if (gotUser.photoState == 3) {
+                    fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
+                    return res.status(400).send('Фото уже прошло модерацию')
+                }
                 db.updateUserPhoto(req.body.id, req.file.filename)
                     .then(() => {
                         db.updateUserPhotoState(req.body.id, 1).then(() => {
                             res.status(200).send('Photo succesfully updated')
                         })
-                    }).catch((err) => res.status(500).send(err))
+                    }).catch((err) => {
+                        fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
+                        res.status(500).send(err)
+                    })
+            }).catch((err) => {
+                fs.unlinkSync(__dirname + '/../src/photos/' + req.file.filename)
+                res.status(500).send(err)
             })
     })
 }
