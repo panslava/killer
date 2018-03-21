@@ -3,6 +3,8 @@ const {check, validationResult} = require('express-validator/check')
 const {matchedData, sanitize} = require('express-validator/filter')
 const multer = require('multer')
 const path = require('path')
+const fs = require('fs')
+
 // api here https://github.com/ctavan/express-validator
 // and here https://github.com/chriso/validator.js
 
@@ -20,14 +22,14 @@ exports.create_user_post = [
     ,
     check('name.first', 'Имя не может быть пустым').trim().escape().isLength({min:1}),
     check('name.last', 'Фамилия не может быть пустой').trim().escape().isLength({min:1}),
-    check('deathcode', 'Код на убийство должен состоять из 4 цифр').trim().escape().isLength({min:4, max:4}).isNumeric(),
+    check('deathCode', 'Код на убийство должен состоять из 4 цифр').trim().escape().isLength({min:4, max:4}).isNumeric(),
     
     //Нужно ли проверять курс?
 
     sanitize('email').trim().normalizeEmail().escape(),
     sanitize('name.first').trim().escape(),
     sanitize('name.last').trim().escape(),
-    sanitize('deathcode').trim().escape(),
+    sanitize('deathCode').trim().escape(),
     (req, res) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
@@ -59,14 +61,20 @@ var upload = multer({
 }).single('photo')
 
 exports.update_user_photo = function (req, res) {
-    db.findUserById(req.id)
-        .then((gotUser) => {
-            if (gotUser.photoState == 3) return res.status(200).send('Фото уже прошло модерацию')
-            upload(req, res, (err) => {
-                if (err) return res.status(500).send(err)
-                db.updatePhotoToUser(gotUser._id, req.filename)
+    upload(req, res, (err) => {
+        if (err) return res.status(500).send(err)
+        db.findUserById(req.body.id)
+            .then((gotUser) => {
+                if (!gotUser.length) return res.status(400).send('No user with this id')
+                if (gotUser.photoState == 3) return res.status(400).send('Фото уже прошло модерацию')
+                db.updateUserPhoto(req.body.id, req.file.filename)
+                    .then(() => {
+                        db.updateUserPhotoState(req.body.id, 1).then(() => {
+                            res.status(200).send('Photo succesfully updated')
+                        })
+                    }).catch((err) => res.status(500).send(err))
             })
-        }).catch((err)=>res.status(500).send(err))
+    })
 }
 
 exports.get_user = function (req, res) {

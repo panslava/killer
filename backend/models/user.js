@@ -32,7 +32,8 @@ const userSchema = mongoose.Schema({
     },
     deathCode: {
         type: String, //4 numbers
-        trim: true
+        trim: true,
+        required: true
     },
     tryCount: {
         type: Number // if >= 3 - die

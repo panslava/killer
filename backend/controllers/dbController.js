@@ -9,9 +9,13 @@ exports.findUserByEmail = function (email) {
 }
 
 exports.findUserById = function(id) {
-    return userModel.findById(id)
+    return userModel.find({_id: id})
 }
 
-exports.updatePhotoToUser = function (id, photoName) {
+exports.updateUserPhoto = function (id, photoName) {
     return userModel.findOneAndUpdate({_id: id}, {$set: {photo: photoName}}, {new: true})
+}
+
+exports.updateUserPhotoState = function (id, newState) {
+    return userModel.findOneAndUpdate({_id: id}, {$set: {photoState: newState}}, {new: true})
 }
