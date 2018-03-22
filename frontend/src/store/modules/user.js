@@ -1,40 +1,43 @@
 import axios from 'axios'
-
+import {router} from '../../main.js'
 const state = {
-    firstName:'dsf',
-    lastName:'df',
-    email:'sfd'
+    email:'',
+    deathCode:''
 }
 
 const mutations = {
+    newUser (state,email,deathCode) {
+        state.email=email
+        state.deathCode=deathCode
+    }
 }
 
 const actions = {
-    register ({},data) {
+    register ({commit},data) {
         var textData=JSON.stringify ({
-            name: {
-                first: data.firstName,
-                last: data.lastName
-            },
+            name: data.name,
             email: data.email,
             vk: data.vk,
-            course: data.course
+            course: data.course,
+            deathCode:data.deathCode
         })
-        axios.post('/api/user', textData, {
+        axios.post('/users/add', textData, {
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response =>{
+            commit('newUser',data.email,data.deathCode)
             var id
             id=response.body.id
             const photoReq=new FormData()
             photoReq.append('id',id)
             photoReq.append('photo',data.photo)
-            axios.put('/api/user', photoReq, {
+            axios.put('/users/update-photo', photoReq, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
+            router.push('/auth')
         })
     }
 }
