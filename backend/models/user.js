@@ -1,0 +1,72 @@
+var mongoose = require('mongoose')
+var connection = require('../config/db.js')
+
+const userSchema = mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    name: {
+        first: {
+            type: String,
+            trim: true
+        },
+        last: {
+            type: String,
+            trim: true
+        }
+    },
+    course: { //бакалавры: 1-4, магистры: 5-6, аспирант: 7, преподаватель: 8 (а вдруг :D)
+        type: Number 
+    },
+    photo: {
+        type: String,
+        trim: true
+    },
+    photoState: { //  0 - не загружена, 1 - ожидает модерации, 2 - не прошла модерацию, 3 - прошла модерацию
+        type: Number 
+    },
+    modMessage: {
+        type: String
+    },
+    deathCode: { //4 numbers
+        type: String, 
+        trim: true,
+        required: true
+    },
+    tryCount: { // if >= 3 - die
+        type: Number 
+    },
+    victimId: {  // _id from mongodb? is it better to use ObjectId???
+        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    },
+    killerId: { // _id from mongodb? is it better to use ObjectId???
+        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
+        trim: true
+    },
+    lifeState: { // 0 - dead, 1 - alive  
+        type: Number 
+    },
+    deathTime: {
+        type: Date
+    },
+    entrCount: {
+        type: Number
+    },
+    killCount: {
+        type: Number
+    },
+    vk: {
+        type: String,
+        trim: true
+    },
+    admin: { //false - user, true - admin
+        type: Boolean
+    }
+})
+
+
+var User = connection.model('User', userSchema)
+
+module.exports = User
