@@ -157,8 +157,7 @@ export default {
             }
         },
         register () {
-            if(!this.$v.name.first.$invalid&&!this.$v.name.last.$invalid&&!this.$v.vk.$invalid&&!this.$v.email.$invalid
-            &&!this.$v.deathCode.$invalid&&!this.$v.courseStr.$invalid&&!this.errCourse){
+            if(!this.$v.$invalid&&!this.errCourse){
                 var postBody= {
                     name:this.name,
                     course:this.courseValue,
