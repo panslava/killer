@@ -6,37 +6,49 @@
       Имя
       <br>
       <input type='text' v-model='name.first'>
-      <span v-if='err.errFirstName'>Некорректные данные</span>
+      <span v-if='!$v.name.first.required'>Поле должно быть заполнено</span>
+      <span v-if='!$v.name.first.alpha'>Только буквы</span>
+      <span v-if='!$v.name.first.minLength'>Не менее 2-х симоволов</span>
+      <span v-if='!$v.name.first.maxLength'>Не более 16-ти симоволов</span>
       <br>
+
       Фамилия
       <br>
       <input type='text' v-model='name.last' >
-      <span v-if='err.errLastName'>Некорректные данные</span>
+      <span v-if='!$v.name.last.required'>Поле должно быть заполнено</span>
+      <span v-if='!$v.name.last.alpha'>Только буквы</span>
+      <span v-if='!$v.name.last.minLength'>Не менее 2-х симоволов</span>
+      <span v-if='!$v.name.last.maxLength'>Не более 20-ти симоволов</span>
       <br>
+
       Курс
       <br>
-      <input type='text' v-model='courseStr'>
-      <span v-if='err.errCourse'>Некорректные данные</span>
+      <input id='course' type='text' v-model='courseStr' @keyup='checkCourse'>
+      <span v-if='!$v.courseStr.required'>Поле должно быть заполнено</span>
+      <span v-if='(errCourse)&&($v.courseStr.required)'>Некоррекные данные</span>
+
       <br>
       Email
       <br>
       <input type='text' v-model='email'>
-      <span v-if='err.errEmail'>Некорректные данные</span>
+      <span v-if='!$v.email.required'>Поле должно быть заполнено</span>
+      <span v-if='!$v.email.email'>Не email</span>
       <br>
-      Код смерти(4 цифры)
+      Код смерти
       <br>
       <input type='text' v-model='deathCode'>
-      <span v-if='err.errDeathCode'>Некорректные данные</span>
+      <span v-if='!$v.deathCode.required'>Поле должно быть заполнено</span>
+      <span v-if='!$v.deathCode.between'>Число от 1000 до 9999</span>
       <br>
       Vk
       <br>
       <input type='text' v-model='vk'>
-      <span v-if='err.errVk'>Некорректные данные</span>
+      <span v-if='!$v.vk.required'>Поле должно быть заполнено</span>
       <br>
       Фото
       <br>
       <input type='file' id='file' @change='loadPhoto' accept='image/jpeg,image/png'>
-      <span v-if='err.errPhoto'>Загрузите фото</span>
+      <span v-if='!$v.photo.required'>Загрузите фото</span>
       <br><br>
      <button type='button' @click='register'>Зарегистрироваться</button>
 
@@ -46,7 +58,9 @@
 </template>
 
 <script>
-import validator from 'validator'
+import { validationMixin } from 'vuelidate'
+import { required, minLength, maxLength, alpha,email,between } from 'vuelidate/lib/validators'
+
 export default {
     data () {
         return {
@@ -60,101 +74,91 @@ export default {
             vk:'',
             photo:'',
             deathCode:'',
-            err:{
-                errPhoto:false,
-                errCourse:false,
-                errVk:false,
-                errFirstName:false,
-                errLastName:false,
-                errDeathCode:false,
-                errEmail:false
+            errCourse:false
+        }
+    },
+
+    mixins: [validationMixin],
+
+    validations: {
+        name: {
+            first:{
+                required,
+                alpha,
+                minLength: minLength(2),
+                maxLength: maxLength(16)
+            },
+            last:{
+                required,
+                alpha,
+                minLength: minLength(2),
+                maxLength: maxLength(20)
             }
+        },
+        vk:{
+            required,
+
+        },
+        photo:{
+            required
+        },
+        email:{
+            required,
+            email
+        },
+        deathCode:{
+            required,
+            between:between(1000,9999)
+        },
+        courseStr:{
+            required
         }
     },
 
     methods: {
         loadPhoto () {
-            this.err.errPhoto=false
             var imagefile = document.getElementById('file')
             this.photo=imagefile.files[0]
-        },
-        checkFirstName () {
-            if ((this.name.first==='')||(!validator.isAlpha(this.name.first))) this.err.errFirstName=true
-            else this.err.errFirstName=false
-        },
-        checkLastName () {
-            if (this.name.last===''||(!validator.isAlpha(this.name.last))) this.err.errLastName=true
-            else this.err.errLastName=false
-        },
-        checkPhoto () {
-            if (this.photo==='') this.err.errPhoto=true
-            else this.err.errPhoto=false
-        },
-        checkVk () {
-            if (this.vk==='') this.err.errVk=true
-            else this.err.errVk=false
-        },
-        checkEmail () {
-            if (validator.isEmail(this.email)) this.err.errEmail=false
-            else this.err.errEmail=true
-        },
-        checkDeathCode () {
-            if((this.deathCode.length===4)&&(this.deathCode!='')&&(validator.isNumeric(this.deathCode)))
-                this.err.errDeathCode=false
-            else this.err.errDeathCode=true
         },
 
         checkCourse () {
             var value
-            if(this.courseStr==='') {
-                this.err.errCourse=true
-                return
-            }
-
-            if(this.courseStr.match(/[0-4]/i)||(this.courseStr.match(/преп/i))||(this.courseStr.match(/асп/i)))
+            var courseStr=(document.getElementById('course')).value
+            if(courseStr.match(/[0-4]/i)||(courseStr.match(/преп/i))||(courseStr.match(/асп/i)))
             {
-                if(this.courseStr.match(/преп/i)) {
-                    this.err.errCourse=false
+                if(courseStr.match(/преп/i)) {
+                    this.errCourse=false
                     this.courseValue=8
                     return
                 }
-                if(this.courseStr.match(/маг/i)) {
-                    if(this.courseStr.match(/[0-2]/i)) {
-                        this.err.errCourse=false
-                        value=this.courseStr.match(/[0-2]/i)[0]
+                if(courseStr.match(/маг/i)) {
+                    if(courseStr.match(/[0-2]/i)) {
+                        this.errCourse=false
+                        value=courseStr.match(/[0-2]/i)[0]
                         this.courseValue=String(4+Number(value))
                         return
                     }
                     else {
-                        this.err.errCourse=true
+                        this.errCourse=true
                         return
                     }
                 }
-                if(this.courseStr.match(/асп/i)) {
-                    this.err.errCourse=false
+                if(courseStr.match(/асп/i)) {
+                    this.errCourse=false
                     this.courseValue=7
                     return
                 }
-                value=this.courseStr.match(/[0-4]/i)[0]
+                value=courseStr.match(/[0-4]/i)[0]
                 this.courseValue=value
-                this.err.errCourse=false
+                this.errCourse=false
             }
             else {
-                this.err.errCourse=true
+                this.errCourse=true
             }
         },
         register () {
-            this.checkFirstName()
-            this.checkLastName()
-            this.checkEmail()
-            this.checkVk()
-            this.checkPhoto()
-            this.checkCourse()
-            this.checkDeathCode()
-            var count=0
-            for (var key in this.err)
-                if (this.err[key]===true) count+=1
-            if(count===0){
+            if(!this.$v.name.first.$invalid&&!this.$v.name.last.$invalid&&!this.$v.vk.$invalid&&!this.$v.email.$invalid
+            &&!this.$v.deathCode.$invalid&&!this.$v.courseStr.$invalid&&!this.errCourse){
                 var postBody= {
                     name:this.name,
                     course:this.courseValue,
