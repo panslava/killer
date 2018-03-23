@@ -23,7 +23,7 @@
 
       Курс
       <br>
-      <input id='course' type='text' v-model='courseStr' @keyup='checkCourse'>
+      <input  type='text' v-model='courseStr' @input='checkCourse'>
       <span v-if='!$v.courseStr.required'>Поле должно быть заполнено</span>
       <span v-if='(errCourse)&&($v.courseStr.required)'>Некоррекные данные</span>
 
@@ -123,18 +123,17 @@ export default {
 
         checkCourse () {
             var value
-            var courseStr=(document.getElementById('course')).value
-            if(courseStr.match(/[0-4]/i)||(courseStr.match(/преп/i))||(courseStr.match(/асп/i)))
+            if(this.courseStr.match(/[0-4]/i)||(this.courseStr.match(/преп/i))||(this.courseStr.match(/асп/i)))
             {
-                if(courseStr.match(/преп/i)) {
+                if(this.courseStr.match(/преп/i)) {
                     this.errCourse=false
                     this.courseValue=8
                     return
                 }
-                if(courseStr.match(/маг/i)) {
-                    if(courseStr.match(/[0-2]/i)) {
+                if(this.courseStr.match(/маг/i)) {
+                    if(this.courseStr.match(/[0-2]/i)) {
                         this.errCourse=false
-                        value=courseStr.match(/[0-2]/i)[0]
+                        value=this.courseStr.match(/[0-2]/i)[0]
                         this.courseValue=String(4+Number(value))
                         return
                     }
@@ -143,12 +142,12 @@ export default {
                         return
                     }
                 }
-                if(courseStr.match(/асп/i)) {
+                if(this.courseStr.match(/асп/i)) {
                     this.errCourse=false
                     this.courseValue=7
                     return
                 }
-                value=courseStr.match(/[0-4]/i)[0]
+                value=this.courseStr.match(/[0-4]/i)[0]
                 this.courseValue=value
                 this.errCourse=false
             }
