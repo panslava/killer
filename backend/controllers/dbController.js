@@ -44,8 +44,9 @@ exports.rebuildCollection = function (userArray) {
 
 exports.checkAdmin = function (id) {
     return new Promise (function (resolve, reject) {
-        userModel.findById(id).then((user) => {
-            if (user.admin == true) {
+        userModel.find({_id: id}).then((user) => {
+            if (user.length != 1) reject()
+            else if (user[0].admin == true) {
                 resolve(user)
             }
             else reject(user)
