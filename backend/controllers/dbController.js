@@ -9,7 +9,6 @@ exports.findUserByEmail = function (email) {
 }
 
 exports.findUserById = function(id) {
-    console.log(id)
     return userModel.find({_id: id})
 }
 
@@ -36,11 +35,9 @@ exports.getRandomUserList = function() {
 }
 
 exports.clearUsers = function () {
-    console.log('clear')
     return userModel.remove({})
 }
 
 exports.rebuildCollection = function (userArray) {
     return userModel.insertMany(userArray)
 }
-
