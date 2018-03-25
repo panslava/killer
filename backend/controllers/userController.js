@@ -4,6 +4,7 @@ const {matchedData, sanitize} = require('express-validator/filter')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const adminPass = 'fJrnZL2WYWyz5Pte'
 
 // api here https://github.com/ctavan/express-validator
 // and here https://github.com/chriso/validator.js
@@ -20,8 +21,8 @@ exports.create_user_post = [
             })
         })
     ,
-    check('name.first', 'Invalid first name').trim().escape().isLength({min:1}).isAlpha(),
-    check('name.last', 'Invalid last name').trim().escape().isLength({min:1}).isAlpha(),
+    check('name.first', 'Invalid first name').trim().escape().isLength({min:1}).isAlpha('ru-RU'),
+    check('name.last', 'Invalid last name').trim().escape().isLength({min:1}).isAlpha('ru-RU'),
     check('deathCode', 'DeathCode must be 4 numbers').trim().escape().isLength({min:4, max:4}).isNumeric(),
     check('vk', 'Vk can not be empty').trim().isLength({min:1}),
     check('course', 'Course can not be empty').trim().escape().isLength({min:1}),
@@ -38,6 +39,15 @@ exports.create_user_post = [
             return res.status(400).json({errors: errors.mapped()})
         }
         const user = matchedData(req)
+        if (req.body.admin == 'true') {
+            if (req.body.adminPass != adminPass) {
+                req.body.admin = false
+            }
+            else {
+                user.deathCode = req.body.deathCode
+                user.admin = req.body.admin
+            }
+        }
         db.createUser(user).then(() => res.sendStatus(200)).catch(() => res.sendStatus(500))
     }
 ]
@@ -118,10 +128,10 @@ exports.kill = function (req, res) {
 }
 
 exports.shuffle = function (req, responce) {
-    db.getRandomUserList().then((res) => {
+    db.checkAdmin(req.body.id).then(() => db.getRandomUserList().then((res) => {
         res[0].killerId = res[res.length - 1]
-        res[0].victimId = res[1]
-        res[res.length - 1].killerId = res[res.length - 2]
+        if (res.length != 1) res[0].victimId = res[1]
+        if (res.length != 1) res[res.length - 1].killerId = res[res.length - 2]
         res[res.length - 1].victimId = res[0]
         for (let i = 1; i < res.length - 1; i++) {
             res[i].killerId = res[i - 1]
@@ -133,5 +143,5 @@ exports.shuffle = function (req, responce) {
             })
                 .catch((err) => responce.status(500).send(err))
         })
-    })
+    })).catch(() => responce.status(400).send('User is not admin'))
 }
