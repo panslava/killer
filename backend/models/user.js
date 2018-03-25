@@ -38,15 +38,16 @@ const userSchema = mongoose.Schema({
     tryCount: { // if >= 3 - die
         type: Number 
     },
-    victimId: {  // _id from mongodb? is it better to use ObjectId???
-        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    victimId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    killerId: { // _id from mongodb? is it better to use ObjectId???
-        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
-        trim: true
+    killerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    lifeState: { // 0 - dead, 1 - alive  
-        type: Number 
+    lifeState: { // false - dead, true - alive  
+        type: Boolean 
     },
     deathTime: {
         type: Date

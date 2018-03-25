@@ -69,10 +69,9 @@ exports.update_user_photo = function (req, res) {
     }
     upload(req, res, (err) => {
         if (err || !req.file) return res.status(400).send('Invalid file. Only .png and .jpeg allowed')
-        db.findUserById(req.body.id)
+        db.findUserById(req.body._id)
             .then((gotUser) => {
                 if (!gotUser.length) {
-                    console.log(__dirname + photosPath + req.file.filename)
                     fs.unlink(__dirname + photosPath + req.file.filename, (err) => {
                         if (err) return res.status(500).send('Error deleting uploaded file, in no user find case')
                         return res.status(400).send('No user with this id')
@@ -84,9 +83,9 @@ exports.update_user_photo = function (req, res) {
                         return res.status(400).send('Photo already moderated')
                     })
                 }
-                db.updateUserById(req.body.id, {photo: req.file.filename})
+                db.updateUserById(req.body._id, {photo: req.file.filename})
                     .then(() => {
-                        db.updateUserById(req.body.id, {photoState: 1}).then(() => {
+                        db.updateUserById(req.body._id, {photoState: 1}).then(() => {
                             return res.status(200).send('Photo succesfully updated')
                         })
                     }).catch((err) => {
@@ -102,6 +101,36 @@ exports.update_user_photo = function (req, res) {
     })
 }
 
-exports.get_user = function (req, res) {
-    res.send('Not implemented: get_user')
+exports.shuffle = function (req, responce) {
+    db.getRandomUserList().then((res) => {
+        res[0].killerId = res[res.length - 1]
+        res[0].victimId = res[1]
+        res[res.length - 1].killerId = res[res.length - 2]
+        res[res.length - 1].victimId = res[0]
+        for (let i = 1; i < res.length - 1; i++) {
+            res[i].killerId = res[i - 1]
+            res[i].victimId = res[i + 1]
+        }
+        db.clearUsers().then(() => {
+            db.rebuildCollection(res).then(() => {
+                responce.status(200).send('Successfully shuffled')
+            })
+                .catch((err) => responce.status(500).send(err))
+        })
+    })
+}
+
+exports.authorize = function (req, res) {
+    db.getByEmailDeathcode(req.body.email, req.body.deathCode).then((user) => {
+        if (user.length == 0) return res.status(400).send('No user found')
+        return res.status(200).send(user)
+    })
+}
+
+exports.kill = function (req, res) {
+    console.log(req.body._id)
+    db.findUserById(req.body._id).then((user) => {
+        console.log(user.victimId.email)
+        res.status(200).send('Fuck yeah')
+    }).catch(() => res.status(400).send('No user with this id'))
 }
