@@ -41,3 +41,14 @@ exports.clearUsers = function () {
 exports.rebuildCollection = function (userArray) {
     return userModel.insertMany(userArray)
 }
+
+exports.checkAdmin = function (id) {
+    return new Promise (function (resolve, reject) {
+        userModel.findById(id).then((user) => {
+            if (user.admin == true) {
+                resolve(user)
+            }
+            else reject(user)
+        })
+    })
+}
