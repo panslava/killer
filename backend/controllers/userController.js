@@ -9,27 +9,29 @@ const fs = require('fs')
 // and here https://github.com/chriso/validator.js
 
 exports.create_user_post = [
-    check('email', 'Некорректный email')
-        .trim().normalizeEmail().escape()
+    check('email', 'Invalid email')
+        .trim().escape()
         .isEmail()
         .custom(value => {
             // 
             return db.findUserByEmail(value).then(user => {
                 if (user.length != 0)
-                    throw new Error('Пользователь с таким Email уже существует')
+                    throw new Error('User with this email already registred')
             })
         })
     ,
-    check('name.first', 'Имя не может быть пустым').trim().escape().isLength({min:1}),
-    check('name.last', 'Фамилия не может быть пустой').trim().escape().isLength({min:1}),
-    check('deathCode', 'Код на убийство должен состоять из 4 цифр').trim().escape().isLength({min:4, max:4}).isNumeric(),
-    
-    //Нужно ли проверять курс?
+    check('name.first', 'Invalid first name').trim().escape().isLength({min:1}).isAlpha(),
+    check('name.last', 'Invalid last name').trim().escape().isLength({min:1}).isAlpha(),
+    check('deathCode', 'DeathCode must be 4 numbers').trim().escape().isLength({min:4, max:4}).isNumeric(),
+    check('vk', 'Vk can not be empty').trim().isLength({min:1}),
+    check('course', 'Course can not be empty').trim().escape().isLength({min:1}),
 
-    sanitize('email').trim().normalizeEmail().escape(),
+    sanitize('email').trim().escape(),
     sanitize('name.first').trim().escape(),
     sanitize('name.last').trim().escape(),
     sanitize('deathCode').trim().escape(),
+    sanitize('vk').trim(),
+    sanitize('course').trim().escape(),
     (req, res) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
@@ -54,7 +56,6 @@ var upload = multer({
     limits: {filesize: 50 * 1024 * 1024},
     fileFilter: function(req, file, cb) {
         if (file.mimetype !== 'image/png' && file.mimetype !== 'image/jpeg') {
-            console.log(file.mimetype)
             return cb(new Error('Only .png and .jpeg allowed'))
         }
         cb(null, true)
@@ -69,10 +70,9 @@ exports.update_user_photo = function (req, res) {
     }
     upload(req, res, (err) => {
         if (err || !req.file) return res.status(400).send('Invalid file. Only .png and .jpeg allowed')
-        db.findUserById(req.body.id)
+        db.findUserById(req.body._id)
             .then((gotUser) => {
                 if (!gotUser.length) {
-                    console.log(__dirname + photosPath + req.file.filename)
                     fs.unlink(__dirname + photosPath + req.file.filename, (err) => {
                         if (err) return res.status(500).send('Error deleting uploaded file, in no user find case')
                         return res.status(400).send('No user with this id')
@@ -81,12 +81,12 @@ exports.update_user_photo = function (req, res) {
                 if (gotUser.photoState == 3) {
                     fs.unlink(__dirname + photosPath + req.file.filename, (err) => {
                         if (err) return res.status(500).send('Error deleting uploaded file, in already moderated case')
-                        return res.status(400).send('Photo already moderated')
+                        return res.status(400).send('Photo already passed moderation')
                     })
                 }
-                db.updateUserById(req.body.id, {photo: req.file.filename})
+                db.updateUserById(req.body._id, {photo: req.file.filename})
                     .then(() => {
-                        db.updateUserById(req.body.id, {photoState: 1}).then(() => {
+                        db.updateUserById(req.body._id, {photoState: 1}).then(() => {
                             return res.status(200).send('Photo succesfully updated')
                         })
                     }).catch((err) => {
@@ -102,6 +102,36 @@ exports.update_user_photo = function (req, res) {
     })
 }
 
-exports.get_user = function (req, res) {
-    res.send('Not implemented: get_user')
+exports.authorize = function (req, res) {
+    req.body.email = req.body.email.toLowerCase()
+    db.getByEmailDeathcode(req.body.email, req.body.deathCode).then((user) => {
+        if (user.length == 0) return res.status(400).send('No match')
+        return res.status(200).send(user)
+    })
+}
+
+//Not implemented yet
+exports.kill = function (req, res) {
+    db.findUserById(req.body._id).then(() => {
+        res.status(200).send('Fuck yeah')
+    }).catch(() => res.status(400).send('No user with this id'))
+}
+
+exports.shuffle = function (req, responce) {
+    db.getRandomUserList().then((res) => {
+        res[0].killerId = res[res.length - 1]
+        res[0].victimId = res[1]
+        res[res.length - 1].killerId = res[res.length - 2]
+        res[res.length - 1].victimId = res[0]
+        for (let i = 1; i < res.length - 1; i++) {
+            res[i].killerId = res[i - 1]
+            res[i].victimId = res[i + 1]
+        }
+        db.clearUsers().then(() => {
+            db.rebuildCollection(res).then(() => {
+                responce.status(200).send('Successfully shuffled')
+            })
+                .catch((err) => responce.status(500).send(err))
+        })
+    })
 }

@@ -4,7 +4,6 @@ var connection = require('../config/db.js')
 const userSchema = mongoose.Schema({
     email: {
         type: String,
-        required: true,
         trim: true
     },
     name: {
@@ -24,6 +23,10 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true
     },
+    vk: {
+        type: String,
+        trim: true
+    },
     photoState: { //  0 - не загружена, 1 - ожидает модерации, 2 - не прошла модерацию, 3 - прошла модерацию
         type: Number 
     },
@@ -32,21 +35,21 @@ const userSchema = mongoose.Schema({
     },
     deathCode: { //4 numbers
         type: String, 
-        trim: true,
-        required: true
+        trim: true
     },
     tryCount: { // if >= 3 - die
         type: Number 
     },
-    victimId: {  // _id from mongodb? is it better to use ObjectId???
-        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    victimId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    killerId: { // _id from mongodb? is it better to use ObjectId???
-        type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
-        trim: true
+    killerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    lifeState: { // 0 - dead, 1 - alive  
-        type: Number 
+    lifeState: { // false - dead, true - alive  
+        type: Boolean 
     },
     deathTime: {
         type: Date
@@ -56,10 +59,6 @@ const userSchema = mongoose.Schema({
     },
     killCount: {
         type: Number
-    },
-    vk: {
-        type: String,
-        trim: true
     },
     admin: { //false - user, true - admin
         type: Boolean
