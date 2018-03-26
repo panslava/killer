@@ -9,7 +9,7 @@ exports.findUserByEmail = function (email) {
 }
 
 exports.findUserById = function(id) {
-    return userModel.find({_id: id})
+    return userModel.findById(id)
 }
 
 exports.getByEmailDeathcode = function (Email, DeathCode) {
@@ -44,12 +44,16 @@ exports.rebuildCollection = function (userArray) {
 
 exports.checkAdmin = function (id) {
     return new Promise (function (resolve, reject) {
-        userModel.find({_id: id}).then((user) => {
-            if (user.length != 1) reject()
-            else if (user[0].admin == true) {
+        userModel.findById(id).then((user) => {
+            if (user == null) reject()
+            else if (user.admin == true) {
                 resolve(user)
             }
             else reject(user)
         })
     })
+}
+
+exports.getAllUsers = function () {
+    return userModel.find()
 }

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose')
-var connectionString = require('../instantiated/mongoConfig.js')
-mongoose.connect(connectionString)
-//mongoose.connect('mongodb://localhost/killerUsers')
+// var connectionString = require('../instantiated/mongoConfig.js')
+// mongoose.connect(connectionString)
+mongoose.connect('mongodb://localhost/killerUsers')
 const connection = mongoose.connection
 connection.on('error', function () {
     console.log('Connect error')
