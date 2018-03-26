@@ -8,8 +8,6 @@
       <input type='text' v-model='name.first'>
       <span v-if='!$v.name.first.required'>Поле должно быть заполнено</span>
       <span v-if='!$v.name.first.alpha'>Только буквы</span>
-      <span v-if='!$v.name.first.minLength'>Не менее 2-х симоволов</span>
-      <span v-if='!$v.name.first.maxLength'>Не более 16-ти симоволов</span>
       <br>
 
       Фамилия
@@ -17,8 +15,6 @@
       <input type='text' v-model='name.last' >
       <span v-if='!$v.name.last.required'>Поле должно быть заполнено</span>
       <span v-if='!$v.name.last.alpha'>Только буквы</span>
-      <span v-if='!$v.name.last.minLength'>Не менее 2-х симоволов</span>
-      <span v-if='!$v.name.last.maxLength'>Не более 20-ти симоволов</span>
       <br>
 
       Курс
@@ -59,7 +55,7 @@
 
 <script>
 import { validationMixin } from 'vuelidate'
-import { required, minLength, maxLength, alpha,email,between } from 'vuelidate/lib/validators'
+import { required,alpha,email,between } from 'vuelidate/lib/validators'
 
 export default {
     data () {
@@ -84,15 +80,11 @@ export default {
         name: {
             first:{
                 required,
-                alpha,
-                minLength: minLength(2),
-                maxLength: maxLength(16)
+                alpha
             },
             last:{
                 required,
-                alpha,
-                minLength: minLength(2),
-                maxLength: maxLength(20)
+                alpha
             }
         },
         vk:{
