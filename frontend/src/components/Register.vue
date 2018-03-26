@@ -3,9 +3,10 @@
 
     <form  enctype="multipart/form-data" method="post" >
 
-      Имя
-      <br>
-      <input type='text' v-model='name.first'>
+      <inputText v-model='name.first'>
+           <span slot='label'>Имя</span>
+      </inputText>
+
       <span v-if='!$v.name.first.required'>Поле должно быть заполнено</span>
       <span v-if='!$v.name.first.alpha'>Только буквы</span>
       <br>
@@ -56,6 +57,7 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import { required,alpha,email,between } from 'vuelidate/lib/validators'
+import inputText from './input.vue'
 
 export default {
     data () {
@@ -72,6 +74,9 @@ export default {
             deathCode:'',
             errCourse:false
         }
+    },
+    components: {
+        'inputText':inputText
     },
 
     mixins: [validationMixin],
