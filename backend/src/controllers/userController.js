@@ -4,7 +4,7 @@ const {matchedData, sanitize} = require('express-validator/filter')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
-const adminPass = 'fJrnZL2WYWyz5Pte'
+const adminPass = require('../instantiated/adminConfig.js')
 
 // api here https://github.com/ctavan/express-validator
 // and here https://github.com/chriso/validator.js
