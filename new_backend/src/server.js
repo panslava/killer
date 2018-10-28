@@ -9,13 +9,13 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get('/status', (req, res) => {
+app.post('/register', (req, res) => {
   res.send({
-    message: 'hello world'
+    message: `User ${JSON.stringify(req.body)} was registered`
   })
 })
 
-const port = 8080
+const port = 8081
 app.listen(port, () => {
   console.log(`Listening on port ${port}`)
 })
