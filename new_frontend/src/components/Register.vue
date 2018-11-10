@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <h1>Register</h1>
     <input
       type="email"

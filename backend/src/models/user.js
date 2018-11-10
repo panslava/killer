@@ -1,5 +1,5 @@
-var mongoose = require('mongoose')
-var connection = require('../config/db.js')
+const mongoose = require('mongoose')
+const connection = require('../config/db.js')
 
 const userSchema = mongoose.Schema({
     email: {
