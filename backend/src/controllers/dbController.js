@@ -1,59 +1,55 @@
-const userModel = require('../models/user.js')
+const userModel = require('../models/User')
+const gameModel = require('../models/Game')
 
 exports.createUser = function (user) {
-    return userModel.create(user)
+  return userModel.create(user)
 }
 
 exports.findUserByEmail = function (email) {
-    return userModel.find({'email': email})
+  return userModel.find({ email: email })
 }
 
-exports.findUserById = function(id) {
-    return userModel.findById(id)
+exports.findUserById = function (id) {
+  return userModel.findById(id)
 }
 
 exports.getByEmailDeathcode = function (Email, DeathCode) {
-    return userModel.find({email: Email, deathCode: DeathCode})
+  return userModel.find({ email: Email, deathCode: DeathCode })
 }
 
 exports.updateUserById = function (id, updateObject) {
-    return userModel.findByIdAndUpdate(id, updateObject, {new: true})
+  return userModel.findByIdAndUpdate(id, updateObject, { new: true })
 }
 
-exports.getRandomUserList = function() {
-    return new Promise (function (resolve, reject) {
-        userModel.count({}, function (err, count) {
-            userModel.aggregate(
-                [ { $sample: { size: count } } ]
-                , (err, res) => {
-                    if (err) reject(err)
-                    resolve(res)
-                }
-            )
-        })
-    })
+exports.dropUsers = function () {
+  return userModel.collection.drop()
 }
 
-exports.clearUsers = function () {
-    return userModel.remove({})
-}
+// exports.getRandomGameUserList = async function () {
+//   let count = await gameUserModel.count({})
 
-exports.rebuildCollection = function (userArray) {
-    return userModel.insertMany(userArray)
-}
+//   let res = await gameUserModel.aggregate([{ $sample: { size: count } }])
+//   return res
+// }
 
-exports.checkAdmin = function (id) {
-    return new Promise (function (resolve, reject) {
-        userModel.findById(id).then((user) => {
-            if (user == null) reject()
-            else if (user.admin == true) {
-                resolve(user)
-            }
-            else reject(user)
-        })
-    })
+// exports.clearGameUsers = function () {
+//   return gameUserModel.remove({})
+// }
+
+// exports.rebuildGameUsers = function (userArray) {
+//   return gameUserModel.insertMany(userArray)
+// }
+
+exports.isAdmin = async function (id) {
+  const user = await userModel.findById(id)
+  if (!user || !user.admin) return false
+  else return true
 }
 
 exports.getAllUsers = function () {
-    return userModel.find()
+  return userModel.find()
 }
+
+// exports.getAllGameUsers = function () {
+//   return gameUserModel.find()
+// }

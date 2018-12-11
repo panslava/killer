@@ -1,13 +1,26 @@
-var mongoose = require('mongoose')
-// var connectionString = require('../instantiated/mongoConfig.js')
-// mongoose.connect(connectionString)
-mongoose.connect('mongodb://localhost/killerUsers')
+const mongoose = require('mongoose')
+const config = require('.')
+
+// prettier-ignore
+// eslint-disable-next-line max-len
+const DB_URL = `mongodb://${config.db.user}:${config.db.password}@${config.db.host}:${config.db.port}/${config.db.database}`
+
+mongoose.set('debug', true)
+
+mongoose.connect(
+  DB_URL,
+  config.db.options
+)
+
 const connection = mongoose.connection
-connection.on('error', function () {
-    console.log('Connect error')
+
+connection.once('open', () => {
+  console.log(`Mongoose successfully connected.
+Options:${JSON.stringify(config.db)}`)
 })
-connection.once('open', function () {
-    console.log('Mongodb started successfully')
+
+connection.on('error', error => {
+  console.error(error)
 })
 
 module.exports = connection

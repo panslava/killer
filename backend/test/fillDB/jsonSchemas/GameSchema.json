@@ -1,0 +1,100 @@
+{
+  "title": "Game",
+  "type": "object",
+  "properties": {
+    "players": {
+      "type": "array",
+      "items": {
+        "title": "itemOf_players",
+        "type": "object",
+        "properties": {
+          "userInfo": {
+            "type": "string",
+            "x-ref": "User",
+            "description": "Refers to User",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "tryCount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "victimId": {
+            "type": "string",
+            "x-ref": "User",
+            "description": "Refers to User",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "killerId": {
+            "type": "string",
+            "x-ref": "User",
+            "description": "Refers to User",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "lifeState": {
+            "type": "boolean"
+          },
+          "deathTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entrCount": {
+            "type": "number"
+          },
+          "killCount": {
+            "type": "number"
+          },
+          "gameId": {
+            "type": "string",
+            "x-ref": "Game",
+            "description": "Refers to Game",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "_id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "settings": {
+      "title": "settings",
+      "type": "object",
+      "properties": {
+        "gameState": {
+          "type": "number"
+        },
+        "timeForKill": {
+          "type": "number"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "_id": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{24}$"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "__v": {
+      "type": "number"
+    }
+  }
+}

@@ -1,16 +1,25 @@
-var express = require('express')
-var bodyParser = require('body-parser')
-var app = express()
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const morgan = require('morgan')
+const config = require('./config/config')
+
+const app = express()
+
+app.use(morgan('dev'))
 app.use(bodyParser.json())
-var users = require('./routes/users.js')
-var admin = require('./routes/admin.js')
+app.use(cors())
 
-app.listen(8080)
-console.log('Listening on port 8080')
+app.listen(config.port, () => {
+  console.log(`Listening on port ${config.port}`)
+})
 
-app.use('/users', users)
-app.use('/admin', admin)
+const userRoutes = require('./routes/users.js')
+const adminRoutes = require('./routes/admin.js')
+
+app.use('/users', userRoutes)
+app.use('/admin', adminRoutes)
 
 app.get('/', (req, res) => {
-    res.send('Backend test')
+  res.send('Simple backend response').status(200)
 })
