@@ -54,7 +54,13 @@ const userSchema = mongoose.Schema(
     admin: {
       // false - user, true - admin
       type: Boolean
-    }
+    },
+    games: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Game'
+      }
+    ]
   },
   {
     timestamps: true

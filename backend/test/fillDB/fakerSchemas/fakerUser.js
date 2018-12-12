@@ -1,4 +1,4 @@
-module.exports.userSchema = {
+module.exports = {
   type: 'object',
   properties: {
     email: {
@@ -50,21 +50,6 @@ module.exports.userSchema = {
     },
     admin: {
       type: 'boolean'
-    },
-    _id: {
-      type: 'string',
-      pattern: '^[0-9a-fA-F]{24}$'
-    },
-    updatedAt: {
-      type: 'string',
-      format: 'date-time'
-    },
-    createdAt: {
-      type: 'string',
-      format: 'date-time'
-    },
-    __v: {
-      type: 'number'
     }
   },
   required: [

@@ -14,13 +14,11 @@ const PlayerSchema = mongoose.Schema(
       min: 0,
       max: 3
     },
-    victimId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+    victimInd: {
+      type: Number
     },
-    killerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+    killerInd: {
+      type: Number
     },
     lifeState: {
       // false - dead, true - alive
@@ -50,7 +48,8 @@ const GameSchema = mongoose.Schema(
     players: [PlayerSchema],
     settings: {
       gameState: {
-        type: Number
+        type: String,
+        enum: ['Registration', 'Game', 'End']
       },
       timeForKill: {
         type: Number

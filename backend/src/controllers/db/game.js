@@ -1,21 +1,24 @@
 const gameModel = require('../../models/Game')
 
-exports.getRandomList = async function (gameId) {
+exports.getAllPlayers = async function (gameId) {
   let game = await gameModel.findById(gameId)
-  let count = game.players.length
-
-  let res = await gameModel.aggregate([{ $sample: { size: count } }])
-  return res
+  return game.players
 }
 
-exports.clearCollection = function () {
-  return gameModel.remove({})
+exports.clearPlayers = async function (gameId) {
+  return gameModel.findByIdAndUpdate(gameId, { $set: { players: [] } })
 }
 
-exports.rebuildCollection = function (userArray) {
-  return gameModel.insertMany(userArray)
+exports.insertPlayers = async function (gameId, userArray) {
+  return gameModel.findByIdAndUpdate(gameId, {
+    $push: { players: { $each: userArray } }
+  })
 }
 
-exports.getAll = function () {
-  return gameModel.find()
+exports.create = async function (game) {
+  return gameModel.create(game)
+}
+
+exports.dropCollection = async function () {
+  return gameModel.collection.drop()
 }
