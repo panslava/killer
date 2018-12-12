@@ -33,3 +33,7 @@ exports.getAllUsers = function () {
 exports.dropCollection = function () {
   return userModel.collection.drop()
 }
+
+exports.registerToGame = function (userId, gameId) {
+  return userModel.findByIdAndUpdate(userId, { $push: { games: gameId } })
+}

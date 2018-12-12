@@ -28,14 +28,12 @@ exports.createUser = [
   check('name.first', 'Invalid first name')
     .trim()
     .escape()
-    .isLength({ min: 1 })
-    .isAlpha('ru-RU'),
+    .isLength({ min: 1 }),
 
   check('name.last', 'Invalid last name')
     .trim()
     .escape()
-    .isLength({ min: 1 })
-    .isAlpha('ru-RU'),
+    .isLength({ min: 1 }),
 
   check('deathCode', 'DeathCode must be 4 numbers')
     .trim()

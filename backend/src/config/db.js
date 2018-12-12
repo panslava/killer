@@ -4,8 +4,10 @@ const config = require('.')
 // prettier-ignore
 // eslint-disable-next-line max-len
 const DB_URL = `mongodb://${config.db.user}:${config.db.password}@${config.db.host}:${config.db.port}/${config.db.database}`
+console.log(DB_URL)
 
 mongoose.set('debug', true)
+mongoose.set('useFindAndModify', false)
 
 mongoose.connect(
   DB_URL,

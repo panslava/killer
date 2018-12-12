@@ -12,7 +12,8 @@ const PlayerSchema = mongoose.Schema(
       // if >= 3 - die
       type: Number,
       min: 0,
-      max: 3
+      max: 3,
+      default: 0
     },
     victimInd: {
       type: Number
@@ -22,7 +23,8 @@ const PlayerSchema = mongoose.Schema(
     },
     lifeState: {
       // false - dead, true - alive
-      type: Boolean
+      type: Boolean,
+      default: true
     },
     deathTime: {
       type: Date
@@ -31,7 +33,8 @@ const PlayerSchema = mongoose.Schema(
       type: Number
     },
     killCount: {
-      type: Number
+      type: Number,
+      default: 0
     },
     gameId: {
       type: mongoose.Schema.Types.ObjectId,
