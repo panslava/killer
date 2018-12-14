@@ -1,4 +1,4 @@
-const db = require('./dbController.js')
+const userDb = require('./db/user')
 const { check, validationResult } = require('express-validator/check')
 const { matchedData, sanitize } = require('express-validator/filter')
 const path = require('path')
@@ -18,7 +18,7 @@ exports.createUser = [
     .isEmail()
     .custom(value => {
       //
-      return db.findUserByEmail(value).then(user => {
+      return userDb.findByEmail(value).then(user => {
         if (user.length !== 0) {
           throw new Error('User with this email already registred')
         }
@@ -88,7 +88,7 @@ exports.createUser = [
         user.admin = req.body.admin
       }
     }
-    db.createUser(user)
+    userDb.create(user)
       .then(() => res.status(200).send('User successfully registred'))
       .catch(() => res.sendStatus(500))
   }
@@ -105,7 +105,7 @@ exports.updateUserPhoto = function (req, res) {
         .send('Invalid file. Only .png and .jpeg allowed. Max size = 25MB')
     }
     try {
-      const gotUser = await db.findUserById(req.body.id)
+      const gotUser = await userDb.findById(req.body.id)
       if (!gotUser) res.status(400).send('User not found')
       if (gotUser.photoState === 3) {
         await fs.unlink(
@@ -118,7 +118,7 @@ exports.updateUserPhoto = function (req, res) {
         if (fs.existsSync(path.join(__dirname, photosPath, gotUser.photo))) {
           fs.unlinkSync(path.join(__dirname, photosPath, gotUser.photo))
         }
-        await db.updateUserById(req.body.id, {
+        await userDb.updateById(req.body.id, {
           photo: req.file.filename,
           photoState: 1
         })
@@ -136,7 +136,7 @@ exports.authorize = async function (req, res) {
   req.body.email = req.body.email.toLowerCase()
 
   try {
-    const user = await db.getByEmailDeathcode(
+    const user = await userDb.getByEmailDeathcode(
       req.body.email,
       req.body.deathCode
     )
@@ -153,7 +153,7 @@ exports.authorize = async function (req, res) {
 }
 
 exports.dropCollection = async function () {
-  return db.dropUsers()
+  return userDb.dropCollection()
 }
 
 // Not implemented yet

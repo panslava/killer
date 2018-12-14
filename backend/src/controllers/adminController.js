@@ -1,8 +1,8 @@
-const userCollection = require('./db/user')
-const playerCollection = require('./db/player')
+const userDb = require('./db/user')
+const gameDb = require('./db/game')
 
 exports.checkAdmin = async function (req, res, next) {
-  const isAdmin = await userCollection.isAdmin(req.body.id)
+  const isAdmin = await userDb.isAdmin(req.body.id)
   if (!isAdmin) {
     return res.status(400).send('User is not an admin')
   }
@@ -11,9 +11,21 @@ exports.checkAdmin = async function (req, res, next) {
   }
 }
 
+function shuffleArray (a) {
+  let j, x, i
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1))
+    x = a[i]
+    a[i] = a[j]
+    a[j] = x
+  }
+  return a
+}
+
 exports.shuffle = async function (req, res) {
   try {
-    const result = await playerCollection.getRandomList()
+    const result = await gameDb.getAllPlayers()
+    shuffleArray(result)
 
     result[0].killerId = result[result.length - 1]
     if (result.length !== 1) {
@@ -26,8 +38,8 @@ exports.shuffle = async function (req, res) {
       result[i].victimId = result[i + 1]
     }
 
-    await playerCollection.clearCollection()
-    await playerCollection.rebuildGameUsers(result)
+    await gameDb.clearCollection()
+    await gameDb.rebuildGameUsers(result)
     res.status(200).send('Successfully shuffled')
   }
   catch (err) {
@@ -38,7 +50,7 @@ exports.shuffle = async function (req, res) {
 
 exports.getAllUsers = async function (req, response) {
   try {
-    const users = await userCollection.getAllUsers()
+    const users = await userDb.getAllUsers()
     response.status(200).send(users)
   }
   catch (err) {
@@ -47,10 +59,10 @@ exports.getAllUsers = async function (req, response) {
   }
 }
 
-exports.getAllGameUsers = async function (req, response) {
+exports.getAllPlayers = async function (req, response) {
   try {
-    const users = await db.getAllUsers()
-    response.status(200).send(users)
+    const players = await gameDb.getAllPlayers(req.body.game_id)
+    response.status(200).send(players)
   }
   catch (err) {
     console.error(err)

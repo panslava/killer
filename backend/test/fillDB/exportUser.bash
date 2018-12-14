@@ -1,1 +1,1 @@
-mongoexport --db killer --collection users --out users.json
+mongoexport --db killer --collection users --jsonArray --out users.json
