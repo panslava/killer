@@ -3,11 +3,11 @@
     <h1 class="header">Вход</h1>
     <div class="email-input input-overlay">
       <label>Email</label>
-      <custom-input placeholder="name@example.com" class="inputs" type="email"></custom-input>
+      <custom-input v-model="email" placeholder="name@example.com" class="inputs" type="email"></custom-input>
     </div>
     <div class="password-input input-overlay">
       <label>Пароль</label>
-      <custom-input placeholder="**********" class="inputs" type="password"></custom-input>
+      <custom-input v-model="password" placeholder="**********" class="inputs" type="password"></custom-input>
     </div>
     <div class="login-button">
       <img class="login-button__image" src="@/assets/icons/arrow.png">

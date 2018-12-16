@@ -1,6 +1,12 @@
 <template>
   <div class="custom-input-overlay">
-    <input class="custom-input" v-model="value" :placeholder="placeholder" :type="type">
+    <input
+      @keyup.enter="submit"
+      class="custom-input"
+      v-model="value"
+      :placeholder="placeholder"
+      :type="type"
+    >
   </div>
 </template>
 
@@ -12,7 +18,12 @@ export default {
       value: ''
     }
   },
-  props: ['placeholder', 'type']
+  props: ['placeholder', 'type'],
+  methods: {
+    submit () {
+      this.$emit('submit')
+    }
+  }
 }
 </script>
 

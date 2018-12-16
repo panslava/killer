@@ -1,19 +1,19 @@
 <template>
-  <div class="overlay">
+  <form @submit.prevent="nextPage" class="overlay">
     <h1 class="header">Регистрация</h1>
     <div class="email-input input-overlay">
       <label>Email</label>
-      <custom-input placeholder="name@example.com" class="inputs" type="email"></custom-input>
+      <custom-input @submit="nextPage" placeholder="name@example.com" class="inputs" type="email"></custom-input>
     </div>
     <div class="password-input input-overlay">
       <label>Пароль</label>
-      <custom-input placeholder="**********" class="inputs" type="password"></custom-input>
+      <custom-input @submit="nextPage" placeholder="**********" class="inputs" type="password"></custom-input>
     </div>
-    <a onclick href="/register/next-page" class="next-page-button">
-      <img class="next-page-button__image" src="@/assets/icons/arrow.png">
+    <a href="next-page" @click.prevent="nextPage" class="next-page-button">
+      <img src="@/assets/icons/arrow.png" class="next-page-button__image">
     </a>
     <router-link class="login" to="/login">Войти</router-link>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -28,6 +28,11 @@ export default {
     return {
       email: '',
       password: ''
+    }
+  },
+  methods: {
+    nextPage () {
+      this.$emit('changePage', 2)
     }
   }
 }
