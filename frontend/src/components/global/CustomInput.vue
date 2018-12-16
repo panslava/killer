@@ -1,0 +1,40 @@
+<template>
+  <div class="custom-input-overlay">
+    <input class="custom-input" v-model="value" :placeholder="placeholder" :type="type">
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'CustomInput',
+  data () {
+    return {
+      value: ''
+    }
+  },
+  props: ['placeholder', 'type']
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss" scoped>
+@import "@/assets/style/global-vars.scss";
+
+.custom-input {
+  font-family: "Roboto";
+  font-weight: 300;
+  color: $color-input-font;
+  background-color: $color-input-background;
+  border-width: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .custom-input {
+    text-align: center;
+    font-size: 16px;
+    padding: 13px;
+  }
+}
+</style>
