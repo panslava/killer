@@ -1,6 +1,6 @@
 <template>
   <div class="overlay">
-    <h1 class="header">Вход</h1>
+    <h1 class="header">Регистрация</h1>
     <div class="email-input input-overlay">
       <label>Email</label>
       <custom-input placeholder="name@example.com" class="inputs" type="email"></custom-input>
@@ -9,10 +9,10 @@
       <label>Пароль</label>
       <custom-input placeholder="**********" class="inputs" type="password"></custom-input>
     </div>
-    <div class="login-button">
-      <img class="login-button__image" src="@/assets/icons/arrow.png">
-    </div>
-    <router-link class="register" to="/register">Регистрация</router-link>
+    <a onclick href="/register/next-page" class="next-page-button">
+      <img class="next-page-button__image" src="@/assets/icons/arrow.png">
+    </a>
+    <router-link class="login" to="/login">Войти</router-link>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ export default {
   components: {
     CustomInput
   },
-  name: 'Login',
+  name: 'RegisterMobileFirst',
   data () {
     return {
       email: '',
@@ -62,8 +62,8 @@ label {
   grid-area: password;
 }
 
-.register {
-  grid-area: register;
+.login {
+  grid-area: login;
 }
 
 @media (max-width: 768px) {
@@ -78,8 +78,8 @@ label {
       "header"
       "email"
       "password"
-      "login-button"
-      "register";
+      "next-page-button"
+      "login";
     grid-template-rows:
       10fr max-content max-content
       9fr 50px;
@@ -96,12 +96,12 @@ label {
     margin-top: 10px;
   }
 
-  .login-button {
+  .next-page-button {
     align-self: end;
     margin-bottom: 20px;
   }
 
-  .login-button__image {
+  .next-page-button__image {
     width: 50px;
   }
 
@@ -109,7 +109,7 @@ label {
     margin-top: 25px;
   }
 
-  .register {
+  .login {
     align-self: end;
   }
 }
