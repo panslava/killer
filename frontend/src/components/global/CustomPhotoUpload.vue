@@ -15,6 +15,7 @@
       id="photo"
       name="photo"
       type="file"
+      accept="image/gif, image/jpeg, image/png"
       class="photo-upload__input"
       @change="handleFileChange"
     >

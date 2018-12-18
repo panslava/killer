@@ -2,6 +2,7 @@
   <div class="custom-input-overlay">
     <input
       @keyup.enter="submit"
+      @input="$emit('input', value)"
       class="custom-input"
       v-model="value"
       :placeholder="placeholder"
@@ -21,6 +22,7 @@ export default {
   props: ['placeholder', 'type'],
   methods: {
     submit () {
+      console.log('CustomInput submit event')
       this.$emit('submit')
     }
   }

@@ -3,11 +3,25 @@
     <h1 class="header">Регистрация</h1>
     <div class="email-input input-overlay">
       <label>Email</label>
-      <custom-input @submit="nextPage" placeholder="name@example.com" class="inputs" type="email"></custom-input>
+      <custom-input
+        v-model="email"
+        @submit="nextPage"
+        placeholder="name@example.com"
+        class="inputs"
+        type="email"
+      ></custom-input>
+      <div class="email-input__error error" v-if="errors.email">{{errors.email}}</div>
     </div>
     <div class="password-input input-overlay">
       <label>Пароль</label>
-      <custom-input @submit="nextPage" placeholder="**********" class="inputs" type="password"></custom-input>
+      <custom-input
+        v-model="password"
+        @submit="nextPage"
+        placeholder="**********"
+        class="inputs"
+        type="password"
+      ></custom-input>
+      <div class="password-input__error error" v-if="errors.password">{{errors.password}}</div>
     </div>
     <a href="next-page" @click.prevent="nextPage" class="next-page-button">
       <img src="@/assets/icons/arrow.png" class="next-page-button__image">
@@ -27,12 +41,26 @@ export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      errors: {}
     }
   },
   methods: {
     nextPage () {
-      this.$emit('changePage', 2)
+      this.errors = {}
+      if (!this.validEmail(this.email)) {
+        console.log('Почта ' + this.email + ' не прошла верификацию')
+        this.errors.email = 'Это не похоже на email'
+      }
+      if (!this.password) {
+        console.log('Пустой пароль')
+        this.errors.password = 'Введите пароль'
+      }
+      if (Object.keys(this.errors).length === 0) { this.$emit('changePage', 2) }
+    },
+    validEmail: function (email) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      return re.test(email)
     }
   }
 }
@@ -69,6 +97,12 @@ label {
 
 .login {
   grid-area: login;
+}
+
+.error {
+  font-weight: 300;
+  color: $color-error;
+  margin-top: 10px;
 }
 
 @media (max-width: 768px) {
