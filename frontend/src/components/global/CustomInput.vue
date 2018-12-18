@@ -38,7 +38,6 @@ export default {
   background-color: $color-input-background;
   border-width: 0;
   box-sizing: border-box;
-  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -46,6 +45,7 @@ export default {
     text-align: center;
     font-size: 16px;
     padding: 13px;
+    width: 100%;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <register-mobile-first v-if="pageNum == 1"></register-mobile-first>
-    <register-mobile-second v-if="pageNum == 2"></register-mobile-second>
+    <register-mobile-first @changePage="pageNum = 2" v-if="pageNum == 1"></register-mobile-first>
+    <register-mobile-second @changePage="pageNum = 1" v-if="pageNum == 2"></register-mobile-second>
   </div>
 </template>
 

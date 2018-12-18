@@ -90,6 +90,8 @@ label {
   .input-overlay {
     text-align: center;
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .inputs {
