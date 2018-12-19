@@ -16,10 +16,10 @@ export default {
   name: 'CustomInput',
   data () {
     return {
-      value: ''
+      value: this.defaultValue
     }
   },
-  props: ['placeholder', 'type'],
+  props: ['placeholder', 'type', 'defaultValue'],
   methods: {
     submit () {
       console.log('CustomInput submit event')

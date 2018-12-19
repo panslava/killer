@@ -5,6 +5,7 @@
       <label>Email</label>
       <custom-input
         v-model="email"
+        :defaultValue="email"
         @submit="nextPage"
         placeholder="name@example.com"
         class="inputs"
@@ -16,6 +17,7 @@
       <label>Пароль</label>
       <custom-input
         v-model="password"
+        :defaultValue="password"
         @submit="nextPage"
         placeholder="**********"
         class="inputs"
@@ -40,8 +42,6 @@ export default {
   name: 'RegisterMobileFirst',
   data () {
     return {
-      email: '',
-      password: '',
       errors: {}
     }
   },
@@ -49,11 +49,11 @@ export default {
     nextPage () {
       this.errors = {}
       if (!this.validEmail(this.email)) {
-        console.log('Почта ' + this.email + ' не прошла верификацию')
+        console.log(`Почта не прошла верификацию: ${this.email}`)
         this.errors.email = 'Это не похоже на email'
       }
       if (!this.password) {
-        console.log('Пустой пароль')
+        console.log(`Пустой пароль: ${this.password}`)
         this.errors.password = 'Введите пароль'
       }
       if (Object.keys(this.errors).length === 0) { this.$emit('changePage', 2) }
@@ -61,6 +61,25 @@ export default {
     validEmail: function (email) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       return re.test(email)
+    }
+  },
+
+  computed: {
+    email: {
+      get () {
+        return this.$store.state.user.email
+      },
+      set (value) {
+        this.$store.commit('updateUser', { email: value })
+      }
+    },
+    password: {
+      get () {
+        return this.$store.state.user.password
+      },
+      set (value) {
+        this.$store.commit('updateUser', { password: value })
+      }
     }
   }
 }

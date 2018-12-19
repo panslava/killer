@@ -14,9 +14,7 @@ export default {
   name: 'Register',
   data () {
     return {
-      windowWidth: window.innerWidth,
-      email: '',
-      password: ''
+      windowWidth: window.innerWidth
     }
   },
   mounted () {

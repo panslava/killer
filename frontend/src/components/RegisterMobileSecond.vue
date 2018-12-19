@@ -5,7 +5,9 @@
       <label>Имя</label>
       <custom-input
         v-model="firstName"
+        @input="controlSubmitButtonColor"
         :placeholder="'Иван'"
+        :defaultValue="firstName"
         @submit="submit"
         class="inputs"
         type="text"
@@ -17,7 +19,9 @@
       <label>Фамилия</label>
       <custom-input
         v-model="lastName"
+        @input="controlSubmitButtonColor"
         :placeholder="'Иванов'"
+        :defaultValue="lastName"
         @submit="submit"
         class="inputs"
         type="text"
@@ -27,8 +31,12 @@
 
     <div class="course-input input-overlay">
       <label>Курс</label>
-      <select v-model="course" class="inputs course-input__select">
-        <option value selected disabled>Сделайте выбор</option>
+      <select
+        @change="controlSubmitButtonColor"
+        v-model="course"
+        class="inputs course-input__select"
+      >
+        <option value="0" selected disabled>Сделайте выбор</option>
         <option value="1">1 бакалавриат</option>
         <option value="2">2 бакалавриат</option>
         <option value="3">3 бакалавриат</option>
@@ -42,11 +50,15 @@
     </div>
     <div class="photo-input input-overlay">
       <label>Фото</label>
-      <custom-photo-upload class="inputs" v-model="photo"></custom-photo-upload>
+      <custom-photo-upload @input="controlSubmitButtonColor" class="inputs" v-model="photo"></custom-photo-upload>
       <div class="photo-input__error error" v-if="errors.photo">{{errors.photo}}</div>
     </div>
     <a href="submit" @click.prevent="submit" class="submit">
-      <img src="@/assets/icons/ok.png" class="submit__image">
+      <img
+        src="@/assets/icons/ok.png"
+        class="submit__image"
+        :class="{submit__image_validated : isValidated}"
+      >
     </a>
     <a href="next-page" @click.prevent="prevPage" class="next-page">
       <img src="@/assets/icons/arrow.png" class="next-page__image">
@@ -67,13 +79,10 @@ export default {
   name: 'RegisterMobileFirst',
   data () {
     return {
-      firstName: '',
-      lastName: '',
-      password: '',
-      course: '',
       photo: null,
 
-      errors: {}
+      errors: {},
+      isValidated: 0
     }
   },
   methods: {
@@ -109,6 +118,40 @@ export default {
 
       if (Object.keys(this.errors).length === 0) {
         console.log('Register mock')
+      }
+    },
+    controlSubmitButtonColor () {
+      if (this.firstName && this.lastName && this.course && this.photo) {
+        this.isValidated = 1
+      } else this.isValidated = 0
+    }
+  },
+
+  computed: {
+    firstName: {
+      get () {
+        return this.$store.state.user.firstName
+      },
+      set (value) {
+        this.$store.commit('updateUser', { firstName: value })
+      }
+    },
+
+    lastName: {
+      get () {
+        return this.$store.state.user.lastName
+      },
+      set (value) {
+        this.$store.commit('updateUser', { lastName: value })
+      }
+    },
+
+    course: {
+      get () {
+        return this.$store.state.user.course
+      },
+      set (value) {
+        this.$store.commit('updateUser', { course: value })
       }
     }
   }
@@ -173,7 +216,12 @@ label {
 }
 
 .submit__image {
-  filter: brightness(60%);
+  filter: grayscale(0.9) brightness(60%);
+  transition: all 1s ease;
+}
+
+.submit__image_validated {
+  filter: grayscale(0) brightness(75%);
 }
 
 .error {
@@ -245,11 +293,6 @@ label {
   .submit__image {
     max-width: 50px;
     transform: scale(1.2);
-    filter: grayscale(0.9) brightness(60%);
-  }
-
-  .submit__image_validated {
-    filter: brightness(75%);
   }
 }
 </style>
