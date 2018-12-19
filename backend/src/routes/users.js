@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/userController.js')
 
-router.post('/add', userController.createUser)
+router.post('/register', userController.createUser)
 router.post('/update-photo', userController.updateUserPhoto)
 router.post('/auth', userController.authorize)
 // router.post('/kill', userController.kill)

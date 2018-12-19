@@ -70,6 +70,7 @@
 <script>
 import CustomInput from '@/components/global/CustomInput.vue'
 import CustomPhotoUpload from '@/components/global/CustomPhotoUpload.vue'
+import AuthService from '@/services/AuthService.js'
 
 export default {
   components: {
@@ -89,7 +90,7 @@ export default {
     prevPage () {
       this.$emit('changePage', 1)
     },
-    submit () {
+    async submit () {
       this.errors = {}
       if (!this.firstName) {
         console.log(`Пустое имя: ${this.firstName}`)
@@ -117,7 +118,29 @@ export default {
       }
 
       if (Object.keys(this.errors).length === 0) {
-        console.log('Register mock')
+        try {
+          let res = await AuthService.register({
+            email: this.$store.state.user.email,
+            password: this.$store.state.user.password,
+            name: {
+              first: this.firstName,
+              last: this.lastName
+            },
+            course: this.course
+          })
+          console.log(res)
+          if (res.status === 200) {
+            res = await AuthService.updatePhoto({
+              photo: this.photo
+            })
+            console.log(res)
+            if (res.status === 200) {
+              console.log('User successfully registred')
+            }
+          }
+        } catch (err) {
+          console.error(err.response)
+        }
       }
     },
     controlSubmitButtonColor () {

@@ -35,15 +35,20 @@ exports.createUser = [
     .escape()
     .isLength({ min: 1 }),
 
-  check('deathCode', 'DeathCode must be 4 numbers')
+  check('password', 'Invalid password')
     .trim()
     .escape()
-    .isLength({ min: 4, max: 4 })
-    .isNumeric(),
-
-  check('vk', 'Vk can not be empty')
-    .trim()
     .isLength({ min: 1 }),
+
+  // check('deathCode', 'DeathCode must be 4 numbers')
+  //   .trim()
+  //   .escape()
+  //   .isLength({ min: 4, max: 4 })
+  //   .isNumeric(),
+
+  // check('vk', 'Vk can not be empty')
+  //   .trim()
+  //   .isLength({ min: 1 }),
 
   check('course', 'Course can not be empty')
     .trim()
@@ -51,6 +56,10 @@ exports.createUser = [
     .isLength({ min: 1 }),
 
   sanitize('email')
+    .trim()
+    .escape(),
+
+  sanitize('password')
     .trim()
     .escape(),
 
@@ -62,19 +71,26 @@ exports.createUser = [
     .trim()
     .escape(),
 
-  sanitize('deathCode')
-    .trim()
-    .escape(),
+  // sanitize('deathCode')
+  //   .trim()
+  //   .escape(),
 
-  sanitize('vk').trim(),
+  // sanitize('vk').trim(),
 
   sanitize('course')
     .trim()
     .escape(),
 
   (req, res) => {
+    console.log(`createUser: userController: 86`)
+    console.log(`req.body = ${JSON.stringify(req.body, 0, 2)}`)
+
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
+      console.log(`Registration failed`)
+      console.log(
+        `error = ${JSON.stringify({ errors: errors.mapped() }, 0, 2)}`
+      )
       return res.status(400).json({ errors: errors.mapped() })
     }
 
@@ -88,26 +104,38 @@ exports.createUser = [
         user.admin = req.body.admin
       }
     }
-    userDb.create(user)
-      .then(() => res.status(200).send('User successfully registred'))
+    userDb
+      .create(user)
+      .then(() => {
+        console.log('User successfully registered')
+        return res.status(200).send('User successfully registered')
+      })
       .catch(() => res.sendStatus(500))
   }
 ]
 
 exports.updateUserPhoto = function (req, res) {
+  console.log(`updateUser: userController: 118`)
+  console.log(`req.body = ${JSON.stringify(req.body, 0, 2)}`)
   if (!fs.existsSync('photos/')) {
+    console.log(`Created folder photos/`)
     fs.mkdirSync('photos/')
   }
-  upload(async function (req, res, err) {
+  upload(req, res, async function (err) {
     if (err || !req.file) {
+      console.log(`Invalid file. Only .png and .jpeg allowed. Max size = 25MB`)
       return res
         .status(400)
         .send('Invalid file. Only .png and .jpeg allowed. Max size = 25MB')
     }
     try {
       const gotUser = await userDb.findById(req.body.id)
-      if (!gotUser) res.status(400).send('User not found')
+      if (!gotUser) {
+        console.log(`User not found in db`)
+        res.status(400).send('User not found')
+      }
       if (gotUser.photoState === 3) {
+        console.log('Photo already passed moderation. Deleting new photo')
         await fs.unlink(
           path.join(__dirname, photosPath, req.file.filename),
           err
