@@ -10,15 +10,15 @@ import RegisterMobileFirst from '@/components/RegisterMobileFirst'
 import RegisterMobileSecond from '@/components/RegisterMobileSecond'
 
 export default {
-  components: {
-    RegisterMobileFirst, RegisterMobileSecond
-  },
-  name: 'RegisterMobile',
-  data () {
-    return {
-      pageNum: 1
+    components: {
+        RegisterMobileFirst, RegisterMobileSecond
+    },
+    name: 'RegisterMobile',
+    data () {
+        return {
+            pageNum: 1
+        }
     }
-  }
 }
 </script>
 

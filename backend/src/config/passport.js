@@ -1,22 +1,27 @@
 const PassportJWT = require('passport-jwt')
 const ExtractJWT = PassportJWT.ExtractJwt
-const Strategy = PassportJWT.Strategy
+const StrategyJWT = PassportJWT.StrategyJWT
 const config = require('.')
 
 const User = require('../models/User')
 
 module.exports = passport => {
-  const parameters = {
-    secretOrKey: config.authentication.jwtSecret,
-    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
-  }
-  passport.use(
-    new Strategy(parameters, (payload, done) => {
-      User.findOne({ id: payload.id }, (error, user) => {
-        if (error) return done(error, false)
-        if (user) done(null, user)
-        else done(null, false)
-      })
-    })
-  )
+    const parameters = {
+        secretOrKey: config.authentication.jwtSecret,
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+    }
+    passport.use(
+        new StrategyJWT(parameters, async function (jwtPayload, done) {
+            try {
+                let user = await User.findbyId(jwtPayload.id)
+                if (!user) return done(null, false)
+
+                return done(null, user)
+            }
+            catch (err) {
+                console.error(err)
+                return done(err, false)
+            }
+        })
+    )
 }

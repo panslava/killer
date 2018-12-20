@@ -2,27 +2,27 @@ const userModel = require('../models/User')
 const gameModel = require('../models/Game')
 
 exports.createUser = function (user) {
-  return userModel.create(user)
+    return userModel.create(user)
 }
 
 exports.findUserByEmail = function (email) {
-  return userModel.find({ email: email })
+    return userModel.find({ email: email })
 }
 
 exports.findUserById = function (id) {
-  return userModel.findById(id)
+    return userModel.findById(id)
 }
 
 exports.getByEmailDeathcode = function (Email, DeathCode) {
-  return userModel.find({ email: Email, deathCode: DeathCode })
+    return userModel.find({ email: Email, deathCode: DeathCode })
 }
 
 exports.updateUserById = function (id, updateObject) {
-  return userModel.findByIdAndUpdate(id, updateObject, { new: true })
+    return userModel.findByIdAndUpdate(id, updateObject, { new: true })
 }
 
 exports.dropUsers = function () {
-  return userModel.collection.drop()
+    return userModel.collection.drop()
 }
 
 // exports.getRandomGameUserList = async function () {
@@ -41,13 +41,13 @@ exports.dropUsers = function () {
 // }
 
 exports.isAdmin = async function (id) {
-  const user = await userModel.findById(id)
-  if (!user || !user.admin) return false
-  else return true
+    const user = await userModel.findById(id)
+    if (!user || !user.admin) return false
+    else return true
 }
 
 exports.getAllUsers = function () {
-  return userModel.find()
+    return userModel.find()
 }
 
 // exports.getAllGameUsers = function () {

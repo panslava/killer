@@ -13,19 +13,19 @@
 
 <script>
 export default {
-  name: 'CustomInput',
-  data () {
-    return {
-      value: this.defaultValue
+    name: 'CustomInput',
+    data () {
+        return {
+            value: this.defaultValue
+        }
+    },
+    props: ['placeholder', 'type', 'defaultValue'],
+    methods: {
+        submit () {
+            console.log('CustomInput submit event')
+            this.$emit('submit')
+        }
     }
-  },
-  props: ['placeholder', 'type', 'defaultValue'],
-  methods: {
-    submit () {
-      console.log('CustomInput submit event')
-      this.$emit('submit')
-    }
-  }
 }
 </script>
 

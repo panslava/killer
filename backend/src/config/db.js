@@ -10,19 +10,19 @@ mongoose.set('debug', true)
 mongoose.set('useFindAndModify', false)
 
 mongoose.connect(
-  DB_URL,
-  config.db.options
+    DB_URL,
+    config.db.options
 )
 
 const connection = mongoose.connection
 
 connection.once('open', () => {
-  console.log(`Mongoose successfully connected.
-Options:${JSON.stringify(config.db)}`)
+    console.log(`Mongoose successfully connected.`)
+    console.log(`Options: ${JSON.stringify(config.db)}`)
 })
 
 connection.on('error', error => {
-  console.error(error)
+    console.error(error)
 })
 
 module.exports = connection
