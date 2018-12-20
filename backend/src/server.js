@@ -3,10 +3,10 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const config = require('./config/index')
+const expressWinston = require('./config/winston')
 
 const app = express()
 
-app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({
@@ -14,6 +14,9 @@ app.use(
   })
 )
 app.use(cors())
+
+app.use(morgan('dev'))
+app.use(expressWinston.logger)
 
 app.listen(config.port, () => {
   console.log(`Listening on port ${config.port}`)
@@ -28,3 +31,5 @@ app.use('/api/admin', adminRoutes)
 app.get('/', (req, res) => {
   res.send('Simple backend response').status(200)
 })
+
+app.use(expressWinston.errorLogger)

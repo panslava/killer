@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const connection = require('../config/db.js')
+const bcrypt = require('bcrypt')
 
 const userSchema = mongoose.Schema(
   {
@@ -66,6 +67,27 @@ const userSchema = mongoose.Schema(
     timestamps: true
   }
 )
+
+userSchema.pre('save', function (next) {
+  const user = this
+  if (this.isModified('password') || this.isNew) {
+    bcrypt.genSalt(10, (error, salt) => {
+      if (error) return next(error)
+      bcrypt.hash(user.password, salt, (error, hash) => {
+        if (error) return next(error)
+        user.password = hash
+        next()
+      })
+    })
+  }
+  else {
+    return next()
+  }
+})
+
+userSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.password)
+}
 
 const User = connection.model('User', userSchema)
 

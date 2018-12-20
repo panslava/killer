@@ -5,7 +5,7 @@ exports.create = function (user) {
 }
 
 exports.findByEmail = function (email) {
-  return userModel.find({ email: email })
+  return userModel.findOne({ email: email })
 }
 
 exports.findById = function (id) {

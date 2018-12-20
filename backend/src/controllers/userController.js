@@ -3,6 +3,8 @@ const { check, validationResult } = require('express-validator/check')
 const { matchedData, sanitize } = require('express-validator/filter')
 const path = require('path')
 const fs = require('fs')
+const jwt = require('jsonwebtoken')
+const config = require('../config/index')
 
 const adminPass = require('../config').authentication.adminPass
 const photosPath = require('../config/multer').photosPath
@@ -10,6 +12,40 @@ const upload = require('../config/multer').upload
 
 // api here https://github.com/ctavan/express-validator
 // and here https://github.com/chriso/validator.js
+
+function jwtSignUser (user) {
+  const ONE_WEEK = 60 * 60 * 24 * 7
+  return jwt.sign(user, config.authentication.jwtSecret, {
+    expiresIn: ONE_WEEK
+  })
+}
+
+exports.authorize = async function (req, res) {
+  req.body.email = req.body.email.toLowerCase()
+
+  try {
+    const user = await userDb.findByEmail(req.body.email)
+
+    if (user.length === 0) {
+      return res.status(403).send('Invalid email or password')
+    }
+
+    const isPasswordVald = await user.comparePassword(req.body.password)
+    if (isPasswordVald) {
+      const userJSON = user.toJSON()
+      res.status(200).send({
+        user: user,
+        toker: jwtSignUser(userJSON)
+      })
+    }
+    else {
+      res.status(403).send('Invalid email or password')
+    }
+  }
+  catch (err) {
+    res.sendStatus(500)
+  }
+}
 
 exports.createUser = [
   check('email', 'Invalid email')
@@ -57,7 +93,8 @@ exports.createUser = [
 
   sanitize('email')
     .trim()
-    .escape(),
+    .escape()
+    .normalizeEmail(),
 
   sanitize('password')
     .trim()
@@ -82,15 +119,8 @@ exports.createUser = [
     .escape(),
 
   (req, res) => {
-    console.log(`createUser: userController: 86`)
-    console.log(`req.body = ${JSON.stringify(req.body, 0, 2)}`)
-
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      console.log(`Registration failed`)
-      console.log(
-        `error = ${JSON.stringify({ errors: errors.mapped() }, 0, 2)}`
-      )
       return res.status(400).json({ errors: errors.mapped() })
     }
 
@@ -104,10 +134,11 @@ exports.createUser = [
         user.admin = req.body.admin
       }
     }
+
+    user.email = user.email.toLowerCase()
     userDb
       .create(user)
       .then(() => {
-        console.log('User successfully registered')
         return res.status(200).send('User successfully registered')
       })
       .catch(() => res.sendStatus(500))
@@ -115,27 +146,22 @@ exports.createUser = [
 ]
 
 exports.updateUserPhoto = function (req, res) {
-  console.log(`updateUser: userController: 118`)
-  console.log(`req.body = ${JSON.stringify(req.body, 0, 2)}`)
   if (!fs.existsSync('photos/')) {
-    console.log(`Created folder photos/`)
     fs.mkdirSync('photos/')
   }
   upload(req, res, async function (err) {
     if (err || !req.file) {
-      console.log(`Invalid file. Only .png and .jpeg allowed. Max size = 25MB`)
       return res
         .status(400)
         .send('Invalid file. Only .png and .jpeg allowed. Max size = 25MB')
     }
     try {
-      const gotUser = await userDb.findById(req.body.id)
-      if (!gotUser) {
-        console.log(`User not found in db`)
-        res.status(400).send('User not found')
+      const user = req.user
+      if (!user) {
+        // never enters
+        res.status(403).send('User not found')
       }
-      if (gotUser.photoState === 3) {
-        console.log('Photo already passed moderation. Deleting new photo')
+      if (user.photoState === 3) {
         await fs.unlink(
           path.join(__dirname, photosPath, req.file.filename),
           err
@@ -143,8 +169,8 @@ exports.updateUserPhoto = function (req, res) {
         return res.status(400).send('Photo already passed moderation')
       }
       else {
-        if (fs.existsSync(path.join(__dirname, photosPath, gotUser.photo))) {
-          fs.unlinkSync(path.join(__dirname, photosPath, gotUser.photo))
+        if (fs.existsSync(path.join(__dirname, photosPath, user.photo))) {
+          fs.unlinkSync(path.join(__dirname, photosPath, user.photo))
         }
         await userDb.updateById(req.body.id, {
           photo: req.file.filename,
@@ -154,34 +180,9 @@ exports.updateUserPhoto = function (req, res) {
       }
     }
     catch (err) {
-      console.error(err)
       res.sendStatus(500)
     }
   })
-}
-
-exports.authorize = async function (req, res) {
-  req.body.email = req.body.email.toLowerCase()
-
-  try {
-    const user = await userDb.getByEmailDeathcode(
-      req.body.email,
-      req.body.deathCode
-    )
-
-    if (user.length === 0) {
-      return res.status(400).send('Invalid email or deathcode')
-    }
-    else return res.status(200).send(user)
-  }
-  catch (err) {
-    console.error(err)
-    req.sendStatus(500)
-  }
-}
-
-exports.dropCollection = async function () {
-  return userDb.dropCollection()
 }
 
 // Not implemented yet

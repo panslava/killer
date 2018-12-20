@@ -108,3 +108,7 @@ exports.rejectPhoto = async function (req, response) {
     response.sendStatus(500)
   }
 }
+
+exports.dropCollection = async function () {
+  return userDb.dropCollection()
+}
