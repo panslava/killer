@@ -12,7 +12,7 @@ module.exports = {
         }
     },
     jwt: {
-        secret: process.env.JWT_SECRET || 'secret',
+        secret: process.env.JWT_SECRET || 'killerjwtsecret',
         expirationTime: process.env.JWT_EXPTIME || '604800' // one week
     },
     authentication: {

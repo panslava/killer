@@ -70,114 +70,140 @@
 <script>
 import CustomInput from '@/components/global/CustomInput.vue'
 import CustomPhotoUpload from '@/components/global/CustomPhotoUpload.vue'
-import AuthService from '@/services/AuthService.js'
+import AuthService from '@/services/AuthService'
+import Api from '@/services/Api'
 
 export default {
-    components: {
-        CustomInput,
-        CustomPhotoUpload
-    },
-    name: 'RegisterMobileFirst',
-    data () {
-        return {
-            photo: null,
+  components: {
+    CustomInput,
+    CustomPhotoUpload
+  },
+  name: 'RegisterMobileFirst',
+  data () {
+    return {
+      photo: null,
 
-            errors: {},
-            isValidated: 0
-        }
-    },
-    methods: {
-        prevPage () {
-            this.$emit('changePage', 1)
-        },
-        async submit () {
-            this.errors = {}
-            if (!this.firstName) {
-                console.log(`Пустое имя: ${this.firstName}`)
-                this.errors.firstName = 'Введите имя'
-            }
-
-            if (!this.lastName) {
-                console.log(`Пустая фамилия ${this.lastName}`)
-                this.errors.lastName = 'Введите фамилию'
-            }
-
-            if (!this.course) {
-                console.log(`Не выбран курс: ${this.course}`)
-                this.errors.course = 'Выберите курс'
-            }
-
-            if (!this.photo) {
-                console.log(`Не выбрано фото: ${this.photo}`)
-                this.errors.photo = 'Выберите фото'
-            } else {
-                if (this.photo.size > 1024 * 1024 * 25) {
-                    console.log(`Слишкмо большой размер фото: ${this.photo}`)
-                    this.error.photo = 'Фотография не должна превышать 25Мб'
-                }
-            }
-
-            if (Object.keys(this.errors).length === 0) {
-                try {
-                    let res = await AuthService.register({
-                        email: this.$store.state.user.email,
-                        password: this.$store.state.user.password,
-                        name: {
-                            first: this.firstName,
-                            last: this.lastName
-                        },
-                        course: this.course
-                    })
-                    console.log(res)
-                    if (res.status === 200) {
-                        res = await AuthService.updatePhoto({
-                            photo: this.photo
-                        })
-                        console.log(res)
-                        if (res.status === 200) {
-                            console.log('User successfully registred')
-                        }
-                    }
-                } catch (err) {
-                    console.error(err.response)
-                }
-            }
-        },
-        controlSubmitButtonColor () {
-            if (this.firstName && this.lastName && this.course && this.photo) {
-                this.isValidated = 1
-            } else this.isValidated = 0
-        }
-    },
-
-    computed: {
-        firstName: {
-            get () {
-                return this.$store.state.user.firstName
-            },
-            set (value) {
-                this.$store.commit('updateUser', { firstName: value })
-            }
-        },
-
-        lastName: {
-            get () {
-                return this.$store.state.user.lastName
-            },
-            set (value) {
-                this.$store.commit('updateUser', { lastName: value })
-            }
-        },
-
-        course: {
-            get () {
-                return this.$store.state.user.course
-            },
-            set (value) {
-                this.$store.commit('updateUser', { course: value })
-            }
-        }
+      errors: {
+        firstName: '',
+        lastName: '',
+        course: '',
+        photo: ''
+      },
+      isValidated: 0
     }
+  },
+  methods: {
+    prevPage () {
+      this.$emit('changePage', 1)
+    },
+    async submit () {
+      this.errors = {
+        firstName: '',
+        lastName: '',
+        course: '',
+        photo: ''
+      }
+      if (!this.firstName) {
+        console.log(`Пустое имя: ${this.firstName}`)
+        this.errors.firstName = 'Введите имя'
+      }
+
+      if (!this.lastName) {
+        console.log(`Пустая фамилия ${this.lastName}`)
+        this.errors.lastName = 'Введите фамилию'
+      }
+
+      if (!this.course) {
+        console.log(`Не выбран курс: ${this.course}`)
+        this.errors.course = 'Выберите курс'
+      }
+
+      if (!this.photo) {
+        console.log(`Не выбрано фото: ${this.photo}`)
+        this.errors.photo = 'Выберите фото'
+      } else {
+        if (this.photo.size > 1024 * 1024 * 25) {
+          console.log(`Слишком большой размер фото: ${this.photo}`)
+          this.errors.photo = 'Фотография не должна превышать 25Мб'
+        }
+      }
+
+      if (Object.keys(this.errors).length === 0) {
+        try {
+          let res = await AuthService.register({
+            email: this.$store.state.user.email,
+            password: this.$store.state.user.password,
+            name: {
+              first: this.firstName,
+              last: this.lastName
+            },
+            course: this.course
+          })
+          if (res.status !== 200) {
+            console.log(res.status)
+            console.log(res.data.errors)
+
+            if (res.data.errors && res.data.errors.email) {
+              console.log('Пользователь с таким email уже зарегистрирован')
+              return
+            }
+          }
+          res = await AuthService.auth({
+            email: this.$store.state.user.email,
+            password: this.$store.state.user.password
+          })
+          console.log(res)
+          this.$store.dispatch('setToken', res.data.token)
+
+          await Api.updatePhoto({
+            photo: this.photo
+          })
+
+          console.log('User successfully regitered')
+
+          this.$router.push({
+            path: 'profile'
+          })
+        } catch (err) {
+          console.error(err.response)
+        }
+      }
+    },
+    controlSubmitButtonColor () {
+      if (this.firstName && this.lastName && this.course && this.photo) {
+        this.isValidated = 1
+      } else this.isValidated = 0
+    }
+  },
+
+  computed: {
+    firstName: {
+      get () {
+        return this.$store.state.user.firstName
+      },
+      set (value) {
+        this.$store.commit('updateUser', { firstName: value })
+      }
+    },
+
+    lastName: {
+      get () {
+        return this.$store.state.user.lastName
+      },
+      set (value) {
+        this.$store.commit('updateUser', { lastName: value })
+      }
+    },
+
+    course: {
+      get () {
+        return this.$store.state.user.course
+      },
+      set (value) {
+        this.$store.commit('updateUser', { course: value })
+      }
+    }
+  }
 }
 </script>
 

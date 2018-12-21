@@ -8,20 +8,20 @@
 import RegisterMobile from '@/components/RegisterMobile.vue'
 
 export default {
-    components: {
-        RegisterMobile
-    },
-    name: 'Register',
-    data () {
-        return {
-            windowWidth: window.innerWidth
-        }
-    },
-    mounted () {
-        window.onresize = () => {
-            this.windowWidth = window.innerWidth
-        }
+  components: {
+    RegisterMobile
+  },
+  name: 'Register',
+  data () {
+    return {
+      windowWidth: window.innerWidth
     }
+  },
+  mounted () {
+    window.onresize = () => {
+      this.windowWidth = window.innerWidth
+    }
+  }
 }
 </script>
 

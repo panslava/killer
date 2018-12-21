@@ -25,17 +25,17 @@
 
 <script>
 export default {
-    props: {
+  props: {
     // Using value here allows us to be v-model compatible.
-        value: File
-    },
+    value: File
+  },
 
-    methods: {
-        handleFileChange (e) {
-            // Whenever the file changes, emit the 'input' event with the file data.
-            this.$emit('input', e.target.files[0])
-        }
+  methods: {
+    handleFileChange (e) {
+      // Whenever the file changes, emit the 'input' event with the file data.
+      this.$emit('input', e.target.files[0])
     }
+  }
 
 }
 </script>

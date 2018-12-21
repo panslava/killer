@@ -95,7 +95,7 @@ userSchema.methods.getJWT = function () {
     let expirationTime = parseInt(config.jwt.expirationTime)
     return (
         'Bearer ' +
-        jwt.sign({ id: this._id }, config.jwt.expirationTime, {
+        jwt.sign({ id: this._id }, config.jwt.secret, {
             expiresIn: expirationTime
         })
     )

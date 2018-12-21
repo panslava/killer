@@ -6,21 +6,26 @@ import Login from '@/components/Login'
 Vue.use(Router)
 
 export default new Router({
-    routes: [
-        {
-            path: '/',
-            name: 'Login',
-            component: Login
-        },
-        {
-            path: '/login',
-            name: 'Login',
-            component: Login
-        },
-        {
-            path: '/register',
-            name: 'Register',
-            component: Register
-        }
-    ]
+  routes: [
+    {
+      path: '/',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register
+    },
+    {
+      path: '/profile',
+      name: 'Login',
+      component: Login
+    }
+  ]
 })

@@ -20,16 +20,16 @@
 import CustomInput from '@/components/global/CustomInput.vue'
 
 export default {
-    components: {
-        CustomInput
-    },
-    name: 'Login',
-    data () {
-        return {
-            email: '',
-            password: ''
-        }
+  components: {
+    CustomInput
+  },
+  name: 'Login',
+  data () {
+    return {
+      email: '',
+      password: ''
     }
+  }
 }
 </script>
 
