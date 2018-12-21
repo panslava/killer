@@ -184,6 +184,10 @@ exports.isEmailFree = async function(req, res) {
   }
 }
 
+exports.getUserByToken = async function(req, res) {
+  res.status(200).send(req.user)
+}
+
 // Not implemented yet
 // exports.kill = function (req, res) {
 // }

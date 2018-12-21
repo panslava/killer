@@ -1,22 +1,29 @@
 <template>
   <div class="profile">
     <div class="close">
-      <img class="close__img" src="@/assets/icons/delete.png">
+      <router-link class="close__link" to="#">
+        <img class="close__img" src="@/assets/icons/delete.png">
+      </router-link>
     </div>
     <div class="vk">
-      <img class="vk__img" src="@/assets/icons/vk.png">
+      <router-link class="vk__link" to="#">
+        <img class="vk__img" src="@/assets/icons/vk.png">
+      </router-link>
     </div>
     <div class="logout">
-      <img class="logout__img" src="@/assets/icons/logout.png">
+      <a @click.prevent="logout" class="logout__link" href="/logout">
+        <img class="logout__img" src="@/assets/icons/logout.png">
+      </a>
     </div>
 
-    <div class="dossier">Досье</div>
-    <div class="photo-status">Статус модерации фото</div>
-    <div class="games">Список игр</div>
+    <router-link to="#" class="dossier">Досье</router-link>
+    <router-link to="#" class="photo-status">Статус обработки фото</router-link>
+    <router-link to="#" class="games">Список игр</router-link>
   </div>
 </template>
 
 <script>
+import Api from '@/services/Api'
 
 export default {
   components: {
@@ -25,7 +32,20 @@ export default {
   data () {
     return {
     }
+  },
+  methods: {
+    logout () {
+      this.$store.commit('logout')
+      this.$router.push({
+        path: 'login'
+      })
+    }
+  },
+  async created () {
+    const res = await Api.getUserByToken()
+    this.$store.commit('updateUser', res.data)
   }
+
 }
 </script>
 
@@ -57,6 +77,7 @@ $icons-size: 37px;
   color: $color-main-font;
   font-size: 30px;
   font-weight: 100;
+  text-decoration: none;
 }
 
 .photo-status {
@@ -64,6 +85,7 @@ $icons-size: 37px;
   color: $color-main-font;
   font-size: 30px;
   font-weight: 100;
+  text-decoration: none;
 }
 
 .games {
@@ -71,6 +93,7 @@ $icons-size: 37px;
   color: $color-main-font;
   font-size: 30px;
   font-weight: 100;
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {

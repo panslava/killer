@@ -1,23 +1,41 @@
 <template>
-  <div class="overlay">
+  <form @submit.prevent="submit" class="overlay">
     <h1 class="header">Вход</h1>
     <div class="email-input input-overlay">
       <label>Email</label>
-      <custom-input v-model="email" placeholder="name@example.com" class="inputs" type="email"></custom-input>
+      <custom-input
+        :defaultValue="email"
+        v-model="email"
+        @submit="submit"
+        placeholder="name@example.com"
+        class="inputs"
+        type="email"
+      ></custom-input>
+      <div class="email-input__error error" v-show="errors.email">{{errors.email}}</div>
     </div>
     <div class="password-input input-overlay">
       <label>Пароль</label>
-      <custom-input v-model="password" placeholder="**********" class="inputs" type="password"></custom-input>
+      <custom-input
+        :defaultValue="password"
+        v-model="password"
+        @submit="submit"
+        placeholder="**********"
+        class="inputs"
+        type="password"
+      ></custom-input>
+      <div class="password-input__error error" v-show="errors.password">{{errors.password}}</div>
     </div>
-    <div class="login-button">
+    <a href="/profile" @click.prevent="submit" class="login-button">
       <img class="login-button__image" src="@/assets/icons/arrow.png">
-    </div>
+    </a>
     <router-link class="register" to="/register">Регистрация</router-link>
-  </div>
+  </form>
 </template>
 
 <script>
 import CustomInput from '@/components/global/CustomInput.vue'
+import { checkEmail } from '@/services/Validation'
+import AuthService from '@/services/AuthService'
 
 export default {
   components: {
@@ -26,8 +44,58 @@ export default {
   name: 'Login',
   data () {
     return {
-      email: '',
-      password: ''
+      errors: {
+        email: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    async submit () {
+      this.errors = {
+        email: '',
+        password: ''
+      }
+      if (!checkEmail(this.email))      {
+        console.log(`Почта не прошла верификацию: ${this.email}`)
+        this.errors.email = 'Это не похоже на email'
+      }
+      if (!this.password)      {
+        console.log(`Пароль не может быть пустым: ${this.password}`)
+        this.errors.password = 'Введите пароль'
+      }
+      if (!this.errors.email && !this.errors.password)      {
+        try        {
+          let res = await AuthService.auth({
+            email: this.$store.state.user.email,
+            password: this.$store.state.user.password
+          })
+          this.$store.dispatch('setToken', res.data.token)
+          this.$router.push({
+            path: 'profile'
+          })
+        } catch (err)        {
+          console.error(err)
+        }
+      }
+    }
+  },
+  computed: {
+    email: {
+      get () {
+        return this.$store.state.user.email
+      },
+      set (value) {
+        this.$store.commit('updateUser', { email: value })
+      }
+    },
+    password: {
+      get () {
+        return this.$store.state.user.password
+      },
+      set (value) {
+        this.$store.commit('updateUser', { password: value })
+      }
     }
   }
 }
@@ -64,6 +132,12 @@ label {
 
 .register {
   grid-area: register;
+}
+
+.error {
+  font-weight: 300;
+  color: $color-error;
+  margin-top: 10px;
 }
 
 @media (max-width: 768px) {

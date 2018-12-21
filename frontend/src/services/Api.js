@@ -4,13 +4,7 @@ export default {
   updatePhoto (photo) {
     let formDataBody = new FormData()
 
-    console.log(photo.photo)
     formDataBody.append('photo', photo.photo)
-
-    for (let key of formDataBody.entries()) {
-      console.log(key[0])
-      console.log(JSON.stringify(key[1]))
-    }
     return axios().post('/api/users/update-photo', formDataBody, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -20,5 +14,9 @@ export default {
 
   isEmailFree (email) {
     return axios().post('api/users/is-email-free', { email: email })
+  },
+
+  getUserByToken () {
+    return axios().post('api/users/get-user-by-token')
   }
 }

@@ -159,7 +159,7 @@ export default {
             photo: this.photo
           })
 
-          console.log('User successfully regitered')
+          console.log('User successfully registered')
 
           this.$router.push({
             path: 'profile'

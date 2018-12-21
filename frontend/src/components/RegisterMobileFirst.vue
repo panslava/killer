@@ -35,6 +35,7 @@
 <script>
 import CustomInput from '@/components/global/CustomInput.vue'
 import Api from '@/services/Api'
+import { checkEmail } from '@/services/Validation'
 
 export default {
   components: {
@@ -55,7 +56,7 @@ export default {
         email: '',
         password: ''
       }
-      if (!this.validEmail(this.email)) {
+      if (!checkEmail(this.email)) {
         console.log(`Почта не прошла верификацию: ${this.email}`)
         this.errors.email = 'Это не похоже на email'
       } else {
@@ -70,10 +71,6 @@ export default {
         this.errors.password = 'Введите пароль'
       }
       if (!this.errors.email && !this.errors.password) { this.$emit('changePage', 2) }
-    },
-    validEmail: function (email) {
-      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      return re.test(email)
     }
   },
 
