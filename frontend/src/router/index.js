@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import Register from '@/components/Register'
 import Login from '@/components/Login'
 import Profile from '@/components/Profile'
+import PhotoStatus from '@/components/PhotoStatus'
+
 import store from '@/store'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -40,20 +44,36 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/photoStatus',
+      name: 'PhotoStatus',
+      component: PhotoStatus,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  const token = store.state.token
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const guest = to.matched.some(record => record.meta.guest)
-  if (guest && token) {
-    next('/profile')
-  } else if (requiresAuth && !token) {
-    next('/login')
-  } else {
-    next()
+router.beforeEach(async (to, from, next) => {
+  try {
+    const token = store.state.token
+    let user = store.state.user
+    if (token && (!user || !user.updatedAt)) {
+      store.dispatch('getAndUpdateUser')
+    }
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+    const guest = to.matched.some(record => record.meta.guest)
+    if (guest && token) {
+      next('/profile')
+    } else if (requiresAuth && !token) {
+      next('/login')
+    } else {
+      next()
+    }
+  } catch (err) {
+    console.error(err)
   }
 })
 

@@ -184,8 +184,16 @@ exports.isEmailFree = async function(req, res) {
   }
 }
 
-exports.getUserByToken = async function(req, res) {
-  res.status(200).send(req.user)
+exports.getUserByToken = function(req, res) {
+  let user = JSON.parse(JSON.stringify(req.user))
+  delete user._id
+  delete user.password
+  res.status(200).send(user)
+}
+
+exports.getPhoto = function(req, res) {
+  const photoPath = path.join(photosPath, req.user.photo)
+  res.status(200).sendFile(photoPath)
 }
 
 // Not implemented yet

@@ -1,10 +1,10 @@
 <template>
   <div class="profile">
-    <div class="close">
+    <!-- <div class="close">
       <router-link class="close__link" to="#">
         <img class="close__img" src="@/assets/icons/delete.png">
       </router-link>
-    </div>
+    </div>-->
     <div class="vk">
       <router-link class="vk__link" to="#">
         <img class="vk__img" src="@/assets/icons/vk.png">
@@ -16,14 +16,19 @@
       </a>
     </div>
 
-    <router-link to="#" class="dossier">Досье</router-link>
-    <router-link to="#" class="photo-status">Статус обработки фото</router-link>
-    <router-link to="#" class="games">Список игр</router-link>
+    <div class="dossier">
+      <router-link to="#" class="dossier__link">Досье</router-link>
+    </div>
+    <div class="photo-status">
+      <router-link to="photoStatus" class="photo-status__link">Статус обработки фото</router-link>
+    </div>
+    <div class="games">
+      <router-link to="#" class="games__link">Список игр</router-link>
+    </div>
   </div>
 </template>
 
 <script>
-import Api from '@/services/Api'
 
 export default {
   components: {
@@ -40,10 +45,6 @@ export default {
         path: 'login'
       })
     }
-  },
-  async created () {
-    const res = await Api.getUserByToken()
-    this.$store.commit('updateUser', res.data)
   }
 
 }
@@ -74,22 +75,31 @@ $icons-size: 37px;
 
 .dossier {
   grid-area: dossier;
-  color: $color-main-font;
-  font-size: 30px;
-  font-weight: 100;
-  text-decoration: none;
 }
 
 .photo-status {
   grid-area: photo-status;
+}
+
+.games {
+  grid-area: games;
+}
+
+.dossier__link {
   color: $color-main-font;
   font-size: 30px;
   font-weight: 100;
   text-decoration: none;
 }
 
-.games {
-  grid-area: games;
+.photo-status__link {
+  color: $color-main-font;
+  font-size: 30px;
+  font-weight: 100;
+  text-decoration: none;
+}
+
+.games__link {
   color: $color-main-font;
   font-size: 30px;
   font-weight: 100;
@@ -101,14 +111,13 @@ $icons-size: 37px;
     box-sizing: border-box;
     padding: $padding-mobile-overlay;
     grid-template-areas:
-      "close"
       "vk"
       "logout"
       "gap"
       "dossier"
       "photo-status"
       "games";
-    grid-template-rows: repeat(3, 1fr) 4fr repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr) 4fr repeat(3, 1fr);
     grid-template-columns: 1fr;
   }
 

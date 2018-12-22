@@ -10,6 +10,7 @@
         placeholder="name@example.com"
         class="inputs"
         type="email"
+        name="email"
       ></custom-input>
       <div class="email-input__error error" v-show="errors.email">{{errors.email}}</div>
     </div>
@@ -22,6 +23,7 @@
         placeholder="**********"
         class="inputs"
         type="password"
+        name="password"
       ></custom-input>
       <div class="password-input__error error" v-show="errors.password">{{errors.password}}</div>
     </div>
@@ -56,16 +58,16 @@ export default {
         email: '',
         password: ''
       }
-      if (!checkEmail(this.email))      {
+      if (!checkEmail(this.email)) {
         console.log(`Почта не прошла верификацию: ${this.email}`)
         this.errors.email = 'Это не похоже на email'
       }
-      if (!this.password)      {
+      if (!this.password) {
         console.log(`Пароль не может быть пустым: ${this.password}`)
         this.errors.password = 'Введите пароль'
       }
-      if (!this.errors.email && !this.errors.password)      {
-        try        {
+      if (!this.errors.email && !this.errors.password) {
+        try {
           let res = await AuthService.auth({
             email: this.$store.state.user.email,
             password: this.$store.state.user.password
@@ -74,7 +76,10 @@ export default {
           this.$router.push({
             path: 'profile'
           })
-        } catch (err)        {
+        } catch (err) {
+          if (err.response && err.response.status === 401) {
+            this.errors.password = 'Неверный email или пароль'
+          }
           console.error(err)
         }
       }

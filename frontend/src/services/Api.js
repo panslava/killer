@@ -18,5 +18,9 @@ export default {
 
   getUserByToken () {
     return axios().post('api/users/get-user-by-token')
+  },
+
+  getPhoto () {
+    return axios().post('api/users/get-photo')
   }
 }

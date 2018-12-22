@@ -7,6 +7,7 @@ import router from './router'
 import store from '@/store'
 
 Vue.config.productionTip = false
+Vue.prototype.$hostname = 'http://localhost:8081'
 
 /* eslint-disable no-new */
 new Vue({

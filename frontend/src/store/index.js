@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 
 import createPersistedState from 'vuex-persistedstate'
 
+import Api from '@/services/Api'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -38,6 +40,23 @@ export default new Vuex.Store({
     },
     setUser ({ commit }, user) {
       commit('setUser', user)
+    },
+    async getAndUpdateUser ({ commit }) {
+      try {
+        const user = (await Api.getUserByToken()).data
+        commit('updateUser', user)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async getPhoto ({ commit }) {
+      try {
+        const rawResponse = await Api.getPhoto()
+        const coded = btoa(rawResponse)
+        console.log(coded)
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 })

@@ -6,6 +6,9 @@ require('../config/passport')(passport)
 
 function isAuthenticated(req, res, next) {
   passport.authenticate('jwt', function(err, user) {
+    console.log(111)
+    console.log(user)
+    console.log(err)
     if (err || !user) {
       res.status(401).send({
         error: 'Access denied'
@@ -26,7 +29,7 @@ router.post(
   isAuthenticated,
   userController.getUserByToken
 )
-
+router.post('/get-photo', isAuthenticated, userController.getPhoto)
 // router.post('/kill', userController.kill)
 
 module.exports = router
