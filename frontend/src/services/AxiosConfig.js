@@ -13,7 +13,7 @@ axios.interceptors.response.use(response => {
 
 export default () => {
   return axios.create({
-    baseURL: `http://localhost:8081/`,
+    baseURL: `${process.env.AxiosURL}:${process.env.AxiosPort}` || `http://localhost:8081/`,
     headers: {
       Authorization: `${store.state.token}`
     }
