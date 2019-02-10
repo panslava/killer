@@ -19,3 +19,5 @@ module.exports = {
         adminPass: process.env.ADMIN_PASS || 'adminPass'
     }
 }
+
+// deploy test
