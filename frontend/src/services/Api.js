@@ -13,14 +13,14 @@ export default {
   },
 
   isEmailFree (email) {
-    return axios().post('api/users/is-email-free', { email: email })
+    return axios().post('/api/users/is-email-free', { email: email })
   },
 
   getUserByToken () {
-    return axios().post('api/users/get-user-by-token')
+    return axios().post('/api/users/get-user-by-token')
   },
 
   getPhoto () {
-    return axios().post('api/users/get-photo')
+    return axios().post('/api/users/get-photo')
   }
 }
