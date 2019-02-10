@@ -8,7 +8,7 @@
         v-model="email"
         @submit="submit"
         placeholder="name@example.com"
-        class="inputs"
+        class="inputs email-input__input"
         type="email"
         name="email"
       ></custom-input>
@@ -21,7 +21,7 @@
         v-model="password"
         @submit="submit"
         placeholder="**********"
-        class="inputs"
+        class="inputs password-input__input"
         type="password"
         name="password"
       ></custom-input>

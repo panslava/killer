@@ -5,6 +5,7 @@ import Register from '@/components/Register'
 import Login from '@/components/Login'
 import Profile from '@/components/Profile'
 import PhotoStatus from '@/components/PhotoStatus'
+import Dossier from '@/components/Dossier'
 
 import store from '@/store'
 
@@ -14,12 +15,8 @@ const router = new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'Login',
-      component: Login,
-      meta: {
-        guest: true
-      }
+      path: '*',
+      redirect: '/login'
     },
     {
       path: '/login',
@@ -49,6 +46,14 @@ const router = new Router({
       path: '/photoStatus',
       name: 'PhotoStatus',
       component: PhotoStatus,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/info',
+      name: 'Dossier',
+      component: Dossier,
       meta: {
         requiresAuth: true
       }

@@ -17,7 +17,7 @@
     </div>
 
     <div class="dossier">
-      <router-link to="#" class="dossier__link">Досье</router-link>
+      <router-link to="info" class="dossier__link">Досье</router-link>
     </div>
     <div class="photo-status">
       <router-link to="photoStatus" class="photo-status__link">Статус обработки фото</router-link>

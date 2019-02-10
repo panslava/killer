@@ -127,8 +127,8 @@ export default {
           this.errors.photo = 'Фотография не должна превышать 25Мб'
         }
       }
-
-      if (Object.keys(this.errors).length === 0) {
+      console.log(this.errors)
+      if (!this.errors.firstName && !this.errors.lastName && !this.errors.course && !this.errors.photo) {
         try {
           let res = await AuthService.register({
             email: this.$store.state.user.email,
